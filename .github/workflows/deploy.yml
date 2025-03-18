@@ -1,0 +1,34 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run deployment commands on EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            sudo git -C /root/superu config user.name "Anas-bigfolio"
+            sudo git -C /root/superu config user.email "anas@bigfolio.co"
+            sudo git -C /root/superu config credential.helper store
+            echo "https://${{ secrets.PAT_TOKEN }}:@github.com" | sudo tee /root/.git-credentials
+            sudo git -C /root/superu pull origin main
+            sudo npm --prefix /root/superu install
+            sudo npm --prefix /root/superu run build
+            sudo pm2 stop /root/superu/server.mjs
+            sudo pm2 start /root/superu/server.mjs

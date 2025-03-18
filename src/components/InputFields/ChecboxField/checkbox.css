@@ -1,0 +1,33 @@
+.custom-checkbox {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .hidden-checkbox {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+  }
+  
+  .checkbox-box {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s, border-color 0.2s;
+  }
+  
+  .custom-checkbox.checked .checkbox-box {
+    background-color: #491A8B;
+    border-color: #491A8B;
+  }
+  
+  .checkmark {
+    color: white;
+  }
+  

@@ -1,0 +1,16 @@
+.slider-container {
+  width: 100%;
+  overflow: hidden;
+}
+
+.swiper-pagination-bullet {
+  width: 26px;
+  height: 8px;
+  background-color: #c4c4c4;
+  margin: 0 6px;
+  border-radius: 9999px;
+}
+
+.swiper-pagination-bullet-active {
+  background-color: var(--primary);
+}

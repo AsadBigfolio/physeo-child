@@ -1,0 +1,14 @@
+.signup-background-gradient {
+  background: rgb(191, 189, 254);
+  background: linear-gradient(
+    45deg,
+    rgba(191, 189, 254, 1) 0%,
+    rgba(171, 148, 255, 1) 8%,
+    rgba(134, 95, 231, 1) 27%,
+    rgba(128, 60, 228, 1) 39%,
+    rgba(125, 43, 215, 1) 46%,
+    rgba(109, 0, 153, 1) 63%,
+    rgba(103, 0, 120, 1) 83%,
+    rgba(106, 3, 96, 1) 100%
+  );
+}
