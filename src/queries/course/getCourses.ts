@@ -8,8 +8,8 @@ const getCourses = async (limit: number, page: number, search: string) => {
     const courses = await Course.find(query)
       .limit(limit)
       .skip((page - 1) * limit)
-      .populate("image", "src");
-
+      .populate("image", "src")
+      .populate("category", "title");
     return JSON.stringify({ courses, totalPages, totalCourses });
   } catch (error) {
     console.error("Error fetching courses:", error.message);

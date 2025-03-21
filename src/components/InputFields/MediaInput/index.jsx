@@ -129,7 +129,7 @@ const MediaInput = ({
     <>
       <label
         htmlFor={name}
-        className={`${labelClasses} text-para-base font-poppins font-semibold mb-[13px]`}
+        className={`${labelClasses} text-[14px] xl:text-para-base font-poppins  mb-2 xl:mb-[13px]`}
       >
         {label}
         {isRequired && <span className="text-red-500">*</span>}

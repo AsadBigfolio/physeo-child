@@ -9,7 +9,7 @@ dotenv.config();
 const dev = process.env.NODE_ENV !== "production";
 const port = process.env.PORT || 3000;
 const app = next({ dev });
-const database = process.env.DATABASE_URL || "mongodb://127.0.0.1:27017/nextjs";
+const database = "mongodb://127.0.0.1:27017/nextjs";
 const handle = app.getRequestHandler();
 
 const nextCallback = (req, res) => {

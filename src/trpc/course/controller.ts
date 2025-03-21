@@ -2,15 +2,18 @@ import { Badge, Course } from "@/models";
 import { Quiz } from "@/models";
 import { Section } from "@/models";
 import { Video } from "@/models";
+import Category from '@/models/Category';
 import PromisifiedVimeoClient from '@/utils/vimeo';
 import { CreateCourseType, UpdateCourseType } from "@/validations/courseSchema";
 import { TRPCError } from "@trpc/server";
+import { ObjectId } from 'mongodb';
+
 export const createCourse = async (course: CreateCourseType) => {
   try {
     const { sections, image, ...rest } = course;
 
+    // Check if course with the same slug exists
     const existingCourse = await Course.findOne({ slug: rest.slug });
-
     if (existingCourse) {
       throw new Error(
         JSON.stringify([
@@ -26,24 +29,45 @@ export const createCourse = async (course: CreateCourseType) => {
 
     const newSections = await Promise.all(
       sections.map(async (section) => {
-        const processedVideos = section.videos.map((video) => ({
-          ...video,
-          thumbnail: video.thumbnail?._id,
-          course: newCourse._id,
-        }));
+        const processedVideos = await Promise.all(
+          section.videos.map(async (video) => {
+            let quizId: ObjectId | null = null;
 
+            if (video.quiz) {
+              const quiz = await Quiz.create({
+                title: video.quiz.title,
+                mcqs: video.quiz.mcqs || [],
+                course: newCourse._id,
+              });
+              quizId = quiz._id;
+            }
+
+            return {
+              ...video,
+              thumbnail: video.thumbnail?._id,
+              course: newCourse._id,
+              ...(quizId && { quiz: quizId }),
+            };
+          })
+        );
         const videos = await Video.insertMany(processedVideos);
 
-        console.log("reached there before quiz", section);
-        let quiz;
-        if (section.quiz) {
-          console.log("reached inside quiz");
-          quiz = await Quiz.create({
-            title: section.quiz.title,
-            mcqs: section.quiz.mcqs,
-            course: newCourse._id,
-          });
-        }
+        const newSection = await Section.create({
+          ...section,
+          title: section.title,
+          videos: videos.map((video) => video._id),
+          courseId: newCourse._id,
+        });
+
+        await Quiz.updateMany(
+          { _id: { $in: videos.map((video) => video.quiz) } },
+          { section: newSection._id }
+        );
+
+        await Video.updateMany(
+          { _id: { $in: videos.map((video) => video._id) } },
+          { section: newSection._id }
+        );
 
         await Badge.create({
           title: `${section.title}`,
@@ -53,45 +77,21 @@ export const createCourse = async (course: CreateCourseType) => {
           image: image._id,
         });
 
-        const newSection = await Section.create({
-          title: section.title,
-          videos: videos.map((video) => video._id),
-          courseId: newCourse._id,
-        });
-
-        // Update the quiz with section ID
-        if (quiz) {
-          await Quiz.findByIdAndUpdate(quiz._id, {
-            section: newSection._id,
-          });
-        }
-
-        await Section.findByIdAndUpdate(newSection._id, {
-          quiz: quiz?._id,
-        });
-
-        await Video.updateMany(
-          { _id: { $in: videos.map((video) => video._id) } },
-          { section: newSection._id }
-        );
-
         return newSection;
       })
     );
 
+    // Update the course with new sections
     const updatedCourse = await Course.findByIdAndUpdate(
       newCourse._id,
       {
         sections: newSections.map((section) => section._id),
       },
-      {
-        new: true,
-      }
+      { new: true }
     );
 
     return updatedCourse;
   } catch (err) {
-    // console.clear();
     console.log(err.message);
     throw new TRPCError({
       code: "BAD_REQUEST",
@@ -100,111 +100,115 @@ export const createCourse = async (course: CreateCourseType) => {
   }
 };
 
+
 export const updateCourse = async (course: UpdateCourseType) => {
   try {
     const { _id, sections, image, ...rest } = course;
 
+    const existingSectionsIds = sections.map((item) => item?._id).filter(Boolean)
+    const existingSections = await Section.find({ courseId: _id })
+    const sectionsToDelete = existingSections
+      .filter((section) => !existingSectionsIds.includes(section._id.toString()))
+      .map((section) => section._id);
+
+    if (sectionsToDelete.length > 0) {
+      await Section.deleteMany({ _id: { $in: sectionsToDelete } });
+      await Video.deleteMany({ section: { $in: sectionsToDelete } });
+    }
     // Update course data
-    const updatedCourse = await Course.findOneAndUpdate(
-      { _id },
+    const updatedCourse = await Course.findByIdAndUpdate(
+      _id,
       {
         ...rest,
         image: image._id,
       },
-      {
-        new: true,
-      }
+      { new: true }
     );
 
     if (!updatedCourse) {
-      throw new Error("Course not found");
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Course not found",
+      });
     }
-
-    const existingSectionIds = new Set(
-      updatedCourse.sections.map((section) => section._id.toString())
-    );
 
     const newSections = await Promise.all(
       sections.map(async (section) => {
-        const videos = await Promise.all(
+        const processedVideos = await Promise.all(
           section.videos.map(async (video) => {
-            const videoData = {
-              ...video,
-              course: updatedCourse._id,
-              section: section._id, // Ensure section reference is added here
-            };
+            let quizId: ObjectId | null = video.quiz?._id ? new ObjectId(video.quiz._id) : null;
+            if (video.quiz) {
+              const quizData = {
+                title: video.quiz.title,
+                mcqs: video.quiz.mcqs || [],
+                course: updatedCourse._id,
+              };
+
+              if (video.quiz._id) {
+                await Quiz.findByIdAndUpdate(video.quiz._id, quizData);
+              } else {
+                const newQuiz = await Quiz.create(quizData);
+                quizId = newQuiz._id;
+              }
+            }
 
             if (video._id) {
-              // Update existing video with section ID
-              return await Video.findByIdAndUpdate(video._id, videoData, {
-                new: true,
-              });
+              return await Video.findByIdAndUpdate(
+                video._id,
+                { ...video, thumbnail: video.thumbnail?._id, course: updatedCourse._id, ...(quizId && { quiz: quizId }), },
+                { new: true }
+              );
             } else {
-              // Create new video with section ID
-              const newVideo = new Video(videoData);
-              await newVideo.save();
-              return newVideo;
+              return await Video.create({ ...video, thumbnail: video.thumbnail?._id, course: updatedCourse._id, ...(quizId && { quiz: quizId }), });
             }
           })
         );
 
-        let quiz;
-        if (section.quiz) {
-          const quizData = {
-            ...section.quiz,
-            course: updatedCourse._id,
-            section: section._id, // Ensure section reference for quiz
-          };
+        const videoIds = processedVideos.map((video) => video?._id);
 
-          if (section.quiz._id) {
-            quiz = await Quiz.findByIdAndUpdate(section.quiz._id, quizData, {
-              new: true,
-            });
-          } else {
-            quiz = await Quiz.create(quizData);
+        let newSection: any;
+        let existingSection: any;
+        if (section._id) {
+          newSection = await Section.findByIdAndUpdate(
+            section._id,
+            { ...section, title: section.title, videos: videoIds, courseId: updatedCourse._id },
+            { new: true }
+          );
+          existingSection = newSection
+        } else {
+          newSection = await Section.create({ ...section, title: section.title, videos: videoIds, courseId: updatedCourse._id });
+        }
+        if (existingSection) {
+          const existingDbVideos = await Video.find({ section: existingSection._id });
+
+          const existingRequestVideoIds = existingSection.videos.map((v) => v._id.toString()).filter(Boolean);
+          const videosToDelete = existingDbVideos
+            .filter((video) => !existingRequestVideoIds.includes(video._id.toString()))
+            .map((video) => video._id);
+          if (videosToDelete.length > 0) {
+            await Video.deleteMany({ _id: { $in: videosToDelete } });
           }
         }
 
-        let newSection;
-        // If section exists, update it
-        if (section._id && existingSectionIds.has(section._id.toString())) {
-          newSection = await Section.findByIdAndUpdate(
-            section._id,
-            {
-              title: section.title,
-              videos: videos.map((video) => video?._id),
-              quiz: quiz?._id,
-              courseId: updatedCourse._id,
-            },
-            { new: true }
-          );
-        } else {
-          // Create new section
-          newSection = new Section({
-            title: section.title,
-            videos: videos.map((video) => video?._id),
-            quiz: quiz?._id,
-            courseId: updatedCourse._id,
-          });
-          await newSection.save();
-        }
+        await Quiz.updateMany({ _id: { $in: videoIds } }, { section: newSection._id });
+        await Video.updateMany({ _id: { $in: videoIds } }, { section: newSection._id });
 
-        // Update the quiz and section with each other's ID
-        if (quiz) {
-          await Quiz.findByIdAndUpdate(quiz._id, { section: newSection._id });
-        }
-
-        await Section.findByIdAndUpdate(newSection._id, {
-          quiz: quiz?._id,
-        });
+        await Badge.findOneAndUpdate(
+          { course: updatedCourse._id, title: section.title },
+          { title: section.title, description: section.title, course: updatedCourse._id, status: "published", image: image._id },
+          { upsert: true }
+        );
 
         return newSection;
       })
     );
 
-    // Update course sections with new section references
-    updatedCourse.sections = newSections.map((section) => section?._id || ("" as any));
-    await updatedCourse.save();
+    // Update course with new section references
+    await Course.findByIdAndUpdate(
+      updatedCourse._id,
+      { sections: newSections.map((section) => section._id) },
+      { new: true }
+    );
 
     return updatedCourse;
   } catch (err) {
@@ -214,6 +218,7 @@ export const updateCourse = async (course: UpdateCourseType) => {
     });
   }
 };
+
 
 
 export const deleteCourseById = async (courseId) => {
@@ -256,6 +261,15 @@ export const getAllCourses = async () => {
     return courses;
   } catch (error) {
     console.error("Error fetching courses:", error.message);
+    throw error;
+  }
+};
+export const getAllCategories = async () => {
+  try {
+    const categories = await Category.find().lean()
+    return categories;
+  } catch (error) {
+    console.error("Error fetching category:", error.message);
     throw error;
   }
 };

@@ -1,5 +1,6 @@
 import CourseProvider from "@/providers/CourseProvider";
 import getCourseById from "@/queries/course/getCourseById";
+import { getAllCategories } from '@/trpc/course/controller';
 
 const layout = async ({ children, params }) => {
   const { id } = params;
@@ -7,6 +8,7 @@ const layout = async ({ children, params }) => {
 
   const stringifyCourseData = JSON.stringify(courseData);
   const course = JSON.parse(stringifyCourseData);
-  return <CourseProvider defaultCourse={course}>{children}</CourseProvider>;
+  const category = await getAllCategories()
+  return <CourseProvider defaultCourse={course} categories={category}>{children}</CourseProvider>;
 };
 export default layout;

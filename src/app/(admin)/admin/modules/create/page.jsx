@@ -1,24 +1,36 @@
 "use client";
 
-import { useContext, useMemo } from "react";
-import CourseFormView from "@/components/Course/CourseFormView";
+import React, { useMemo } from "react";
 import Page from "@/components/UI/Page";
 import { trpc } from "@/utils/trpcClient";
 import { safeJSONParse } from "@/utils/jsonParse";
+import CourseFormView from "@/components/Course/CourseFormView";
 import { toast } from "sonner";
-import { useCourseStore } from "@/providers/CourseProvider";
 import { formatErrors } from "@/utils/formatTRPCErrors";
+import { useCourseStore } from "@/providers/CourseProvider";
 import { useRouter } from "next/navigation";
 
-const UpdateCourse = () => {
+const breadcrumbs = [
+  {
+    label: "Courses",
+    destination: "/admin/courses",
+  },
+  {
+    label: "Add Course",
+    destination: "/admin/courses/create",
+  },
+];
+
+const AddCourse = () => {
   const router = useRouter();
-  const { mutate, data, isPending, error } = trpc.course.update.useMutation({
+  const { course, validationErrors, isDisabled } = useCourseStore();
+
+  const { mutate, data, isPending, error } = trpc.course.create.useMutation({
     onSuccess: () => {
-      toast.success("Course updated successfully!");
-      router.push("/admin/courses");
+      toast.success("Course added successfully.");
+      // router.push("/admin/courses");
     },
   });
-  const { course, validationErrors, isDisabled } = useCourseStore();
 
   const formattedErrors = useMemo(() => formatErrors(error), [error]);
   const formattedValidationErrors = useMemo(
@@ -26,39 +38,23 @@ const UpdateCourse = () => {
     [validationErrors]
   );
 
-  const breadcrumbs = [
-    {
-      label: "Courses",
-      destination: "/admin/courses",
-    },
-    {
-      label: course.title,
-      destination: "/admin/courses/" + course._id,
-    },
-  ];
   return (
     <Page
       header={{
         backAction: {
           url: "/admin/courses",
         },
-        title: "Update Course",
+        title: "Add Course",
         primaryAction: {
           content: "Save",
           type: "button",
           disabled: isDisabled,
           onAction: () => {
             mutate(course);
+            // console.log(course)
           },
           loading: isPending,
         },
-        secondaryActions: [
-          {
-            content: "View",
-            url: "/courses/course/" + course.slug,
-            external: true,
-          },
-        ],
       }}
       fullWidth={false}
       breadcrumbs={breadcrumbs}
@@ -71,4 +67,4 @@ const UpdateCourse = () => {
   );
 };
 
-export default UpdateCourse;
+export default AddCourse;

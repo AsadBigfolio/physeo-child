@@ -82,7 +82,7 @@ const Player = ({ handleVideoClick, handleSectionBaseModal }) => {
           key={currentVideoData?._id}
           controls
           startTime={progress || 0}
-          url={currentVideoData?.url}
+          url={currentVideoData?.videoUrl}
           playing={true}
           onReady={handlePlayerProgress}
           style={{

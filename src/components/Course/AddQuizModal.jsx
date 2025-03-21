@@ -11,20 +11,20 @@ import { formatQuizErrors } from "@/utils/formatTRPCErrors";
 import Editor from "../Editor";
 
 const AddQuizModal = ({ section, addQuizModalOpen, closeModal }) => {
-  const { updateCourse, course, setCourse, updateQuiz, selectedSectionIndex } =
+  const { updateCourse, course, setCourse, updateQuiz, selectedSectionIndex, selectedVideoIndex } =
     useCourseStore();
   const [mcqs, setMcqs] = useState([]);
   const [quizTitle, setQuizTitle] = useState("");
   const [validationErrors, setValidationErrors] = useState({});
 
   useEffect(() => {
-    if (course && selectedSectionIndex >= 0) {
-      const sectionWithQuizzes = course?.sections[selectedSectionIndex];
+    if (course && selectedSectionIndex >= 0 && selectedVideoIndex >= 0) {
+      const sectionWithQuizzes = course?.sections[selectedSectionIndex].videos[selectedVideoIndex];
 
       setMcqs(sectionWithQuizzes?.quiz?.mcqs || []);
       setQuizTitle(sectionWithQuizzes?.quiz?.title || "");
     }
-  }, [course, selectedSectionIndex]);
+  }, [course, selectedSectionIndex, selectedVideoIndex]);
 
   const handleAddMcq = () => {
     setMcqs([
@@ -85,20 +85,12 @@ const AddQuizModal = ({ section, addQuizModalOpen, closeModal }) => {
       return;
     }
 
-    const updatedSections = course.sections.map((s, index) =>
-      index === selectedSectionIndex
-        ? {
-            ...s,
-            quiz: quizData,
-          }
-        : s
-    );
-
+    const updatedSections = [...course.sections]
+    updatedSections[selectedSectionIndex].videos[selectedVideoIndex].quiz = quizData
     updateCourse({ sections: updatedSections });
 
     closeModal();
   };
-
   return (
     <Modal
       title="Add Quiz"

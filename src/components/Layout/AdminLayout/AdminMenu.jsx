@@ -32,9 +32,9 @@ const menuItems = [
     icon: <MdManageAccounts />,
   },
   {
-    key: "Courses",
-    label: "Courses",
-    href: "/admin/courses",
+    key: "Modules",
+    label: "Modules",
+    href: "/admin/modules",
     icon: <MdPlayLesson />,
   },
   {

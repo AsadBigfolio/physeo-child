@@ -6,12 +6,12 @@ import Skeleton from "@/components/UI/ResourceList/Skeleton";
 
 const breadcrumbs = [
   {
-    label: "Courses",
-    destination: "/admin/courses",
+    label: "Modules",
+    destination: "/admin/modules",
   },
 ];
 
-const Course = ({ searchParams }) => {
+const Module = ({ searchParams }) => {
   const limit = searchParams.limit || 25;
   const page = searchParams.page || 1;
   const search = searchParams.search || "";
@@ -21,8 +21,8 @@ const Course = ({ searchParams }) => {
     <>
       <Page
         primaryAction={{
-          content: "Add Course",
-          url: "/admin/courses/create",
+          content: "Add Module",
+          url: "/admin/modules/create",
         }}
         breadcrumbs={breadcrumbs}
       >
@@ -38,4 +38,4 @@ const Course = ({ searchParams }) => {
     </>
   );
 };
-export default Course;
+export default Module;

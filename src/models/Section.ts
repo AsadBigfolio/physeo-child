@@ -19,6 +19,10 @@ const sectionSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Quiz",
     },
+    flashCardLink: {
+      type: String,
+      default: ""
+    }
   },
   {
     timestamps: true,

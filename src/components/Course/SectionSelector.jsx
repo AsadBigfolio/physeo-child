@@ -29,7 +29,7 @@ const SectionSelector = ({
   const [isAdding, setIsAdding] = useState(false);
   const [newSectionTitle, setNewSectionTitle] = useState("");
   const [showTitleError, setShowTitleError] = useState("");
-
+  const [openAccordion, setOpenAccordion] = React.useState("item-1");
   const handleAddSection = () => {
     if (newSectionTitle) {
       setShowTitleError("");
@@ -45,15 +45,19 @@ const SectionSelector = ({
   const handleSectionSelect = (index) => {
     setSelectedSectionIndex(index);
   };
-
+  const onDelete = (sectionIndex) => {
+    const sectionsCopy = [...course.sections];
+    sectionsCopy.splice(sectionIndex, 1)
+    updateCourse({ ...course, sections: sectionsCopy });
+  }
   return (
     <Card
-      title="Sections"
+      title="Sub Module"
       className="col-span-3"
       primaryAction={
         sections?.length > 0 &&
         !isAdding && {
-          content: "Add Section",
+          content: "Add Sub Module",
           onAction: () => setIsAdding(true),
         }
       }
@@ -80,6 +84,9 @@ const SectionSelector = ({
                 </div>
               ),
             }))}
+            onDelete={onDelete}
+            openValue={openAccordion}
+            setOpenAccordion={setOpenAccordion}
           />
         </div>
         {sections?.length === 0 && !isAdding && (
@@ -100,12 +107,21 @@ const SectionSelector = ({
               label="Title"
               value={newSectionTitle}
               onChange={(e) => setNewSectionTitle(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleAddSection();
+                  setOpenAccordion(`item-${sections.length}`)
+                  handleSectionSelect(sections.length);
+                }
+              }}
               error={showTitleError}
             />
             <Button onClick={handleAddSection} className="mt-2" type="button">
               Add
             </Button>
           </div>
+
         )}
       </div>
       <TextInput

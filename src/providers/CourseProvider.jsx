@@ -18,6 +18,7 @@ const initialState = {
   sections: [],
   status: "published",
   slug: "",
+  category: "649c803bc44dab502b7c7092" // preclinical id
 };
 
 const courseReducer = (state, action) => {
@@ -32,7 +33,7 @@ const courseReducer = (state, action) => {
 
 const CourseContext = createContext({});
 
-const CourseProvider = ({ children, defaultCourse = initialState }) => {
+const CourseProvider = ({ children, defaultCourse = initialState, categories = [] }) => {
   const params = useParams()
   const [course, dispatch] = useReducer(courseReducer, defaultCourse);
   const [isDisabled, setIsDisabled] = useState(true);
@@ -49,11 +50,11 @@ const CourseProvider = ({ children, defaultCourse = initialState }) => {
   const updateCourse = (data) => {
     dispatch({ type: "UPDATE_COURSE", payload: data });
   };
-
   return (
     <CourseContext.Provider
       value={{
         course,
+        categories,
         validationErrors,
         selectedSectionIndex,
         selectedVideoIndex,

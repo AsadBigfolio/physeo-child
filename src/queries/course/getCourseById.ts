@@ -9,10 +9,15 @@ export const getCourseById = async (courseId: string) => {
           {
             path: "videos",
             model: "Video",
-            populate: {
+            populate: [{
               path: "thumbnail",
               model: "File",
             },
+              {
+                path: "quiz",
+                model: "Quiz",
+              }
+            ]
           },
           {
             path: "quiz",

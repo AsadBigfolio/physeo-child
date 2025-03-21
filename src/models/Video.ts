@@ -7,7 +7,7 @@ const videoSchema = new Schema(
       required: true,
       trim: true,
     },
-    url: {
+    videoUrl: {
       type: String,
       trim: true,
     },
@@ -37,7 +37,28 @@ const videoSchema = new Schema(
     },
     duration: {
       type: Number,
-    }
+    },
+    mnemonicsDesktop: {
+      type: String,
+      default: "",
+    },
+    mnemonicsMobile: {
+      type: String,
+      default: "",
+    },
+    pdfUrl: {
+      type: String,
+      default: "",
+    },
+    audioUrl: {
+      type: String,
+      default: "",
+    },
+    quiz: {
+      type: Schema.Types.ObjectId,
+      ref: "Quiz",
+    },
+    topics: [String]
   },
   {
     timestamps: true,

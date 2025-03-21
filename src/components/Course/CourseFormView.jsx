@@ -13,7 +13,7 @@ import { useCourseStore } from "@/providers/CourseProvider";
 const CourseFormView = ({ formattedErrors, formattedValidationErrors }) => {
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [addQuizModalOpen, setAddQuizModalOpen] = useState(false);
-  const { course, updateCourse, setSelectedVideoIndex } = useCourseStore();
+  const { course, updateCourse, setSelectedVideoIndex, categories } = useCourseStore();
 
   const closeVideoModal = () => {
     setAddModalOpen(false);
@@ -23,7 +23,7 @@ const CourseFormView = ({ formattedErrors, formattedValidationErrors }) => {
   return (
     <div>
       <div className="grid grid-cols-3 gap-6">
-        <Card title="Information" className="col-span-2">
+        <Card title="Module" className="col-span-2">
           <TextInput
             label={"Title"}
             placeholder={"Course Title"}
@@ -64,6 +64,16 @@ const CourseFormView = ({ formattedErrors, formattedValidationErrors }) => {
         </Card>
         <Card className="">
           <SelectInput
+            label={"Select Course"}
+            name={"course"}
+            placeholder={"Active/Inactive"}
+            type={"text"}
+            value={course.category}
+            error={formattedValidationErrors?.category || formattedErrors?.category}
+            options={categories?.map((item) => ({ label: item.title, value: item._id }))}
+            onChange={(e) => updateCourse({ category: e.target.value })}
+          />
+          <SelectInput
             label={"Status"}
             name={"status"}
             placeholder={"Active/Inactive"}
@@ -85,6 +95,7 @@ const CourseFormView = ({ formattedErrors, formattedValidationErrors }) => {
             error={formattedValidationErrors?.tags || formattedErrors?.tags}
             onChange={(tags) => updateCourse({ tags })}
           />
+
           <TextInput
             label={"Slug"}
             placeholder={"Course Slug"}

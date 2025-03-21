@@ -12,6 +12,7 @@ const TagInput = ({
   disabled,
   value,
   onChange,
+  isTopic,
   ...props
 }) => {
   const [tags, setTags] = useState([]);
@@ -20,6 +21,14 @@ const TagInput = ({
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && inputValue.trim() !== "") {
       e.preventDefault();
+      if (isTopic) {
+        const topicsList = inputValue.split(",")
+        const newTags = [...tags, ...topicsList];
+        setTags(newTags);
+        onChange([...newTags])
+        setInputValue("");
+        return
+      }
       const newTags = [...tags, inputValue.trim()];
       setTags(newTags);
       onChange([...newTags])
@@ -39,7 +48,7 @@ const TagInput = ({
     <div className="w-full flex flex-col mb-6 relative">
       <label
         htmlFor={name}
-        className={`${labelClasses} text-para-base font-poppins font-semibold mb-[13px]`}
+        className={`${labelClasses} text-[14px] xl:text-para-base font-poppins  mb-2 xl:mb-[13px]`}
       >
         {label}
         {isRequired && <span className="text-red-500">*</span>}

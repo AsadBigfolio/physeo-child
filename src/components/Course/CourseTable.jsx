@@ -139,6 +139,13 @@ const CourseTable = ({ courseData }) => {
             accessorKey: "title",
           },
           {
+            header: "Course",
+            accessorKey: "category",
+            cell: ({ row }) => (
+              <p>{row.original.category.title}</p>
+            )
+          },
+          {
             header: "Status",
             accessorKey: "status",
             cell: ({ row }) => (
@@ -157,7 +164,7 @@ const CourseTable = ({ courseData }) => {
             cell: ({ row }) => (
               <div className="flex space-x-2">
                 <Link
-                  href={`/admin/courses/${row.original._id}`}
+                  href={`/admin/modules/${row.original._id}`}
                   className="p-2 rounded-full "
                   title="Edit"
                 >
