@@ -1,16 +1,14 @@
 import dynamic from 'next/dynamic';
+import AOSInitializer from '@/components/AOSInitializer';
 
 const HeroSection = dynamic(() => import("@/components/Home/HeroSection"));
-const FeatureSection = dynamic(() => import("@/components/Home/FeatureSection"));
-const AboutUsSection = dynamic(() => import("@/components/Home/AboutUsSection"));
-const ShopProductsSection = dynamic(() => import("@/components/Home/ShopProductsSection"));
-const OurCoursesSection = dynamic(() => import("@/components/Home/OurCoursesSection"));
+const CourseSection = dynamic(() => import("@/components/Home/CourseSection"));
+const BooksSection = dynamic(() => import("@/components/Home/BooksSection"));
+const CurriculumSection = dynamic(() => import("@/components/Home/CurriculumSection"));
 const SubscriptionSection = dynamic(() => import("@/components/Home/SubscriptionSection"));
 const ReviewsSection = dynamic(() => import("@/components/Home/ReviewsSection"));
-const CertificateSection = dynamic(() => import("@/components/Home/CertificateSection"));
+const WhyChooseUsSection = dynamic(() => import("@/components/Home/WhyChooseUsSection"));
 import loadSession from "@/utils/session";
-import MediaUniverse from '@/components/Home/MediaUniverse';
-
 
 export const metadata = {
   title: 'Home',
@@ -19,34 +17,46 @@ export const metadata = {
 
 export default async function Home() {
   const session = await loadSession();
+
   return (
     <>
-      <div className='flex flex-col gap-5 md:gap-20 max-w-[1320px] px-[20px] mx-auto container-dynamic'>
-        <HeroSection />
-      </div>
-      <div className='mt-[20px] md:mt-[80px]'>
-        <FeatureSection />
-      </div>
-      {/* <ShopProductsSection /> */}
-      <div className='flex flex-col gap-5 md:gap-20 max-w-[1320px] px-[20px] mx-auto'>
-      <OurCoursesSection />
-      </div>
-      <div className='flex flex-col gap-5 md:gap-20 max-w-[1320px] px-[20px] mx-auto'>
-        <div className='md:px-[65px]'>
-          <SubscriptionSection session={session} />
-        </div>
-        <div className='md:px-[65px]'>
-          <CertificateSection />
-        </div>
-        <div className='md:px-[65px]'>
-          <ReviewsSection />
+      <AOSInitializer />
+      <div className='bg-gradient-to-b from-blue-50 to-blue-100'>
+        <div className='flex flex-col gap-5 md:gap-20 max-w-[1320px] px-[20px] mx-auto' data-aos="fade-up" data-aos-delay="100">
+          <HeroSection />
         </div>
       </div>
-      <div className='flex flex-col gap-20 max-w-[1320px] px-[20px] mx-auto mb-[40px]'>
-        <AboutUsSection />
+      <div className='mt-[10px] ' data-aos="fade-up" data-aos-delay="200">
+        <CourseSection />
       </div>
-      <div className='flex flex-col gap-20 max-w-[1320px] px-[20px] mx-auto mb-[40px]'>
-        <MediaUniverse />
+      <div style={{ backgroundImage: 'url(/new/circulumbg.png)', height: 776 }} data-aos="zoom-in" data-aos-delay="300">
+        <div className='flex flex-col gap-5 md:gap-20 max-w-[1320px] px-[20px] mx-auto'>
+          <CurriculumSection />
+        </div>
+      </div>
+      <div className='max-w-[1320px] px-[20px] mx-auto' data-aos="flip-up" data-aos-delay="400">
+        <WhyChooseUsSection />
+      </div>
+      <div className="overflow-hidden">
+        <div
+          style={{ backgroundImage: 'url(/new/background.png)', height: 861 }}
+          data-aos="fade-left"
+          data-aos-delay="500"
+        >
+          <div className='flex flex-col gap-5 md:gap-20 max-w-[1320px] px-[20px] mx-auto'>
+            <SubscriptionSection session={session} />
+          </div>
+        </div>
+      </div>
+      <div className='flex flex-col gap-5 md:gap-20 max-w-[1320px] px-[20px] mx-auto' data-aos="fade-right" data-aos-delay="600">
+        <ReviewsSection />
+      </div>
+      <div className="overflow-hidden">
+        <div style={{ backgroundImage: 'url(/new/booksbg.png)', height: 591 }} data-aos="fade-left" data-aos-delay="700">
+          <div className='flex flex-col gap-20 max-w-[1320px] px-[20px] mx-auto mb-[40px]'>
+            <BooksSection />
+          </div>
+        </div>
       </div>
     </>
   );

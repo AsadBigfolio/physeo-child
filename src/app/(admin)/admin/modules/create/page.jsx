@@ -12,12 +12,12 @@ import { useRouter } from "next/navigation";
 
 const breadcrumbs = [
   {
-    label: "Courses",
-    destination: "/admin/courses",
+    label: "Modules",
+    destination: "/admin/modules",
   },
   {
-    label: "Add Course",
-    destination: "/admin/courses/create",
+    label: "Add Module",
+    destination: "/admin/modules/create",
   },
 ];
 
@@ -27,7 +27,7 @@ const AddCourse = () => {
 
   const { mutate, data, isPending, error } = trpc.course.create.useMutation({
     onSuccess: () => {
-      toast.success("Course added successfully.");
+      toast.success("Module added successfully.");
       // router.push("/admin/courses");
     },
   });
@@ -42,9 +42,9 @@ const AddCourse = () => {
     <Page
       header={{
         backAction: {
-          url: "/admin/courses",
+          url: "/admin/modules",
         },
-        title: "Add Course",
+        title: "Add Module",
         primaryAction: {
           content: "Save",
           type: "button",

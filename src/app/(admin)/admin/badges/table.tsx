@@ -51,7 +51,7 @@ export default function Table({ data, totalPages, currentPage, totalRows }) {
       accessorKey: "description",
       cell: ({ row }) => {
         const truncateText = (text, charLimit) => {
-          return text.length > charLimit ? text.slice(0, charLimit) + "..." : text;
+          return text?.length > charLimit ? text.slice(0, charLimit) + "..." : text;
         };
 
         return <span>{truncateText(row.original.description, 20)}</span>;

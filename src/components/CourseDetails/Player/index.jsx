@@ -17,7 +17,6 @@ const Player = ({ handleVideoClick, handleSectionBaseModal }) => {
 
   const { mutate: addWatchHistory } = trpc.userCourse.createOrUpdateWatchHistory.useMutation({
     onSuccess: (data) => {
-      console.log({ data })
       if (data?.badge) {
         handleSectionBaseModal(data?.badge)
       }
@@ -74,7 +73,7 @@ const Player = ({ handleVideoClick, handleSectionBaseModal }) => {
 
   return (
     <div className="video-wrapper w-full h-0 relative pt-[56%]">
-      {showPlayer ? (
+      {true ? (
         <ReactPlayer
           width="100%"
           height="100%"
@@ -83,13 +82,14 @@ const Player = ({ handleVideoClick, handleSectionBaseModal }) => {
           controls
           startTime={progress || 0}
           url={currentVideoData?.videoUrl}
-          playing={true}
+          // playing={true}
           onReady={handlePlayerProgress}
           style={{
             position: "absolute",
             top: "0px",
             left: "0px",
           }}
+          light={thumbnailImage}
           progressInterval={10000}
           onProgress={(progress) => {
             if (!videoEnded) {

@@ -10,8 +10,8 @@ import { formatQuizErrors } from "@/utils/formatTRPCErrors";
 
 import Editor from "../Editor";
 
-const AddQuizModal = ({ section, addQuizModalOpen, closeModal }) => {
-  const { updateCourse, course, setCourse, updateQuiz, selectedSectionIndex, selectedVideoIndex } =
+const AddQuizModal = ({ addQuizModalOpen, closeModal }) => {
+  const { updateCourse, course, selectedSectionIndex, selectedVideoIndex } =
     useCourseStore();
   const [mcqs, setMcqs] = useState([]);
   const [quizTitle, setQuizTitle] = useState("");
@@ -19,7 +19,7 @@ const AddQuizModal = ({ section, addQuizModalOpen, closeModal }) => {
 
   useEffect(() => {
     if (course && selectedSectionIndex >= 0 && selectedVideoIndex >= 0) {
-      const sectionWithQuizzes = course?.sections[selectedSectionIndex].videos[selectedVideoIndex];
+      const sectionWithQuizzes = course?.sections[selectedSectionIndex]?.videos[selectedVideoIndex];
 
       setMcqs(sectionWithQuizzes?.quiz?.mcqs || []);
       setQuizTitle(sectionWithQuizzes?.quiz?.title || "");

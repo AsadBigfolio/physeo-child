@@ -71,7 +71,7 @@ const TestimonialFormView = ({ formattedErrors }) => {
                                     onChange={handleRatingChange}
                                     className="ml-2 h-5 w-5 border-gray-300 text-[#491a8b] focus:ring-[#491a8b]"
                                     style={{
-                                        accentColor: '#491a8b',
+                                        accentColor: 'var(--primary)',
                                     }}
                                 />
                             </label>

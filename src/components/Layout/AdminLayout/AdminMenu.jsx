@@ -6,13 +6,12 @@ import {
   MdPlayLesson,
   MdManageAccounts,
   MdWebStories,
-  MdAnalytics,
   MdOutlineRateReview,
 } from "react-icons/md";
 import { LuFileBadge } from "react-icons/lu";
 import { FaFileSignature } from "react-icons/fa6";
 import { FaBlogger, FaRegNewspaper } from "react-icons/fa";
-import { redirect, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   Tooltip,
   TooltipContent,
@@ -95,8 +94,8 @@ function AdminMenu({ collapsed, setCollapsed }) {
   return (
     <div
       className={cn(
-        "bg-white h-screen z-20 flex flex-col p-3 px-5 justify-between transition-all relative shadow-lg",
-        collapsed ? "w-[100px]" : "w-[250px]"
+        "bg-white h-screen z-20 flex flex-col p-3 px-5 justify-between transition-all relative shadow-lg border-r border-gray-100",
+        collapsed ? "w-[90px]" : "w-[250px]"
       )}
     >
       <div className="flex flex-col">
@@ -105,20 +104,18 @@ function AdminMenu({ collapsed, setCollapsed }) {
             <img
               src="/SuperULogoMain.png"
               alt="logo"
-              className="object-contain"
+              className={cn("object-contain transition-all", collapsed ? "w-12" : "w-40")}
             />
           </Link>
         </div>
         <div
           className={cn(
-            "absolute right-[-20px] z-50 cursor-pointer bg-white hover:bg-slate-100 rounded-full shadow-lg border-[1px] p-2 text-lg top-[10vh] transition-all duration-300 transform",
+            "absolute right-[-18px] z-50 cursor-pointer bg-white hover:bg-primary/10 rounded-full shadow-md border border-primary/20 p-2 text-lg top-[10vh] transition-all duration-300 transform",
             collapsed ? "rotate-180" : "rotate-0"
           )}
           onClick={() => setCollapsed((prev) => !prev)}
         >
-          <span>
-            <FaChevronLeft />
-          </span>
+          <FaChevronLeft className="text-primary" />
         </div>
         <div
           className={cn(
@@ -131,8 +128,14 @@ function AdminMenu({ collapsed, setCollapsed }) {
           ))}
           <Separator />
           <div className="mt-5 w-full ml-3">
-            <Button onClick={handleLogout} size="sm" className="space-x-2">
-              <IoLogOut /> {!collapsed && <span>Sign out</span>}
+            <Button
+              onClick={handleLogout}
+              size="sm"
+              variant="outline"
+              className="space-x-2 border-primary text-primary hover:bg-primary/10 hover:text-primary"
+            >
+              <IoLogOut />
+              {!collapsed && <span>Sign out</span>}
             </Button>
           </div>
         </div>
@@ -144,21 +147,20 @@ function AdminMenu({ collapsed, setCollapsed }) {
 const MenuItem = ({ item, collapsed }) => {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-
   const isActive = pathname === item.href;
 
   const Trigger = collapsed ? TooltipTrigger : "div";
 
   return (
-    <div className=" mb-4 flex flex-col w-full" key={item.key}>
+    <div className="mb-3 flex flex-col w-full" key={item.key}>
       <Tooltip key={item.title || item.label} delayDuration={0}>
         <Trigger asChild>
           <div className="flex flex-col w-full">
             <Link
               href={item.href || ""}
               className={cn(
-                "px-4 py-1 hover:bg-slate-100 rounded-lg cursor-pointer flex justify-between items-center w-full transition-all hover:scale-95",
-                isActive && "bg-primary-light",
+                "px-4 py-2 hover:bg-[#007DFC]/10 rounded-lg cursor-pointer flex justify-between items-center w-full transition-all",
+                isActive && "bg-[#007DFC]/20 text-primary font-medium",
                 collapsed && "justify-center"
               )}
               onClick={() => setOpen(!open)}
@@ -166,25 +168,30 @@ const MenuItem = ({ item, collapsed }) => {
               <div className="flex items-center">
                 <span
                   className={cn(
-                    "text-primary-foreground transition-all delay-75",
-                    collapsed ? "text-title-xl" : "text-[24px] mr-2"
+                    "transition-all",
+                    collapsed ? "text-[22px] text-primary" : "text-[20px] mr-3 text-primary"
                   )}
                 >
-                  <TooltipContent>
-                    <p>{item.label}</p>
-                  </TooltipContent>
                   {item?.icon}
                 </span>
                 <p
                   className={cn(
-                    "transition-all text-para-base",
+                    "transition-all text-sm",
                     collapsed ? "opacity-0 w-0" : "opacity-100 w-full"
                   )}
                 >
                   {item.label}
                 </p>
               </div>
-              {!collapsed && item.children && <FaChevronDown size={10} />}
+              {!collapsed && item.children && (
+                <FaChevronDown
+                  size={12}
+                  className={cn(
+                    "text-gray-500 transition-transform",
+                    open && "rotate-180"
+                  )}
+                />
+              )}
             </Link>
             {!collapsed && item.children && (
               <div
@@ -203,6 +210,11 @@ const MenuItem = ({ item, collapsed }) => {
             )}
           </div>
         </Trigger>
+        {collapsed && (
+          <TooltipContent side="right">
+            <p>{item.label}</p>
+          </TooltipContent>
+        )}
       </Tooltip>
     </div>
   );

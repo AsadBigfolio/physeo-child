@@ -23,8 +23,8 @@
   }
   
   .custom-checkbox.checked .checkbox-box {
-    background-color: #491A8B;
-    border-color: #491A8B;
+    background-color: var(--primary);
+    border-color:  var(--primary);
   }
   
   .checkmark {

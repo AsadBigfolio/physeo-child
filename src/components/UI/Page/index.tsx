@@ -75,7 +75,7 @@ const Page: React.FC<PageProps> = ({
   return (
     <div className={cn("p-[24px] mx-auto", { "max-w-[1356px]": !fullWidth })}>
       <div className="flex justify-between mb-[20px]">
-        <Breadcrumbs items={breadcrumbs} />
+        <Breadcrumbs items={breadcrumbs as any} />
         {PrimaryAction}
       </div>
       {header ? <PageHeader {...header} /> : null}

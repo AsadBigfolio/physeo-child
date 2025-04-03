@@ -69,13 +69,6 @@ export const createCourse = async (course: CreateCourseType) => {
           { section: newSection._id }
         );
 
-        await Badge.create({
-          title: `${section.title}`,
-          description: section.title,
-          course: newCourse._id,
-          status: "published",
-          image: image._id,
-        });
 
         return newSection;
       })
@@ -88,7 +81,16 @@ export const createCourse = async (course: CreateCourseType) => {
         sections: newSections.map((section) => section._id),
       },
       { new: true }
-    );
+    )
+    if (updatedCourse) {
+      await Badge.create({
+        title: `${updatedCourse.title}`,
+        description: updatedCourse.title,
+        course: updatedCourse._id,
+        status: "published",
+        image: image._id,
+      });
+    }
 
     return updatedCourse;
   } catch (err) {
@@ -111,8 +113,11 @@ export const updateCourse = async (course: UpdateCourseType) => {
       .filter((section) => !existingSectionsIds.includes(section._id.toString()))
       .map((section) => section._id);
 
-    if (sectionsToDelete.length > 0) {
+    if (sectionsToDelete?.length > 0) {
       await Section.deleteMany({ _id: { $in: sectionsToDelete } });
+      const videoRecordsToDelete = await Video.find({ section: { $in: sectionsToDelete } });
+      const quizToDelete = videoRecordsToDelete.map((item) => item?.quiz).filter(Boolean)
+      await Quiz.deleteMany({ _id: { $in: quizToDelete } });
       await Video.deleteMany({ section: { $in: sectionsToDelete } });
     }
     // Update course data
@@ -185,6 +190,9 @@ export const updateCourse = async (course: UpdateCourseType) => {
           const videosToDelete = existingDbVideos
             .filter((video) => !existingRequestVideoIds.includes(video._id.toString()))
             .map((video) => video._id);
+          const videoRecordsToDelete = await Video.find({ _id: { $in: videosToDelete } });
+          const quizToDelete = videoRecordsToDelete.map((item) => item?.quiz).filter(Boolean)
+          await Quiz.deleteMany({ _id: { $in: quizToDelete } });
           if (videosToDelete.length > 0) {
             await Video.deleteMany({ _id: { $in: videosToDelete } });
           }
@@ -192,12 +200,6 @@ export const updateCourse = async (course: UpdateCourseType) => {
 
         await Quiz.updateMany({ _id: { $in: videoIds } }, { section: newSection._id });
         await Video.updateMany({ _id: { $in: videoIds } }, { section: newSection._id });
-
-        await Badge.findOneAndUpdate(
-          { course: updatedCourse._id, title: section.title },
-          { title: section.title, description: section.title, course: updatedCourse._id, status: "published", image: image._id },
-          { upsert: true }
-        );
 
         return newSection;
       })
@@ -209,7 +211,13 @@ export const updateCourse = async (course: UpdateCourseType) => {
       { sections: newSections.map((section) => section._id) },
       { new: true }
     );
-
+    if (updatedCourse) {
+      await Badge.findOneAndUpdate(
+        { course: updatedCourse._id },
+        { title: updatedCourse.title, course: updatedCourse._id, status: updatedCourse.status, image: image._id },
+        { upsert: true }
+      );
+    }
     return updatedCourse;
   } catch (err) {
     throw new TRPCError({

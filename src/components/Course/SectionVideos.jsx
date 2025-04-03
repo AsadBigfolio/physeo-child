@@ -75,7 +75,7 @@ const SectionVideos = ({ section, setAddModalOpen, setAddQuizModalOpen }) => {
             <div className="flex gap-2">
               <Button
                 size="sm"
-                variant="outline"
+                type="button"
                 onClick={() => setAddModalOpen(true)}
               >
                 Add Video
@@ -111,7 +111,7 @@ const SectionVideos = ({ section, setAddModalOpen, setAddQuizModalOpen }) => {
                   <div className="flex space-x-2 justify-end pr-10">
                     <Button
                       size="sm"
-                      variant="outline"
+                      type="button"
                       onClick={() => {
                         setAddQuizModalOpen(true)
                         setSelectedVideoIndex(row.index);
@@ -162,7 +162,7 @@ const SectionVideos = ({ section, setAddModalOpen, setAddQuizModalOpen }) => {
           <p className="text-gray-500 text-sm">No videos added yet</p>
           <Button
             size="sm"
-            variant="outline"
+              type='button'
               disabled={validationErrors}
             onClick={() => setAddModalOpen(true)}
           >

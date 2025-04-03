@@ -45,7 +45,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: #491a8b;
+    --primary: #007DFC;
     --primary-foreground: #350c6e;
 
     --secondary: #491a8b;
@@ -99,8 +99,8 @@
 }
 
 body {
-  font-family: "Syne", sans-serif;
-  background-color: var(--background);
+  /* font-family: "Syne", sans-serif; */
+  /* background-color: var(--background); */
 }
 
 .spinner {
@@ -130,30 +130,7 @@ body {
 .tox .tox-collection--list .tox-collection__item--active {
   background-color: #491a8b !important;
 }
-/* Global scrollbar styles */
-::-webkit-scrollbar {
-  width: 12px;
-}
 
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 20px;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: #491a8b;
-  border-radius: 20px;
-  border: 3px solid #ffffff;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: #491a8b;
-}
-
-::selection {
-  background: #491a8b;
-  color: white;
-}
 
 /*our courses description scrool container*/
 .scroll-container {
@@ -179,8 +156,6 @@ body {
 }
 
 
-
-
 /* main title */
 .text-display-xxl {
   font-size: 32px; 
@@ -189,7 +164,6 @@ body {
 .text-subtitle-md{
   font-size: 16px;
   line-height: 1.5;
-  font-family: Poppins;
 }
 /* title */
 .text-heading-xl{
@@ -202,7 +176,7 @@ font-weight: 700;
 .text-title-lg{
   font-size: 18px;
   font-weight: 600;
-  line-height: normal;
+  line-height: 24px;
 }
 
 @media (min-width: 768px) {
@@ -237,4 +211,50 @@ font-weight: 700;
 }
 html {
   scroll-behavior: smooth;
+}
+.swiper-wrapper{
+  gap: 20px;
+}
+
+.loader {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: block;
+  margin:15px auto;
+  position: relative;
+  color: #FFF;
+  left: -100px;
+  box-sizing: border-box;
+  animation: shadowRolling 2s linear infinite;
+}
+
+@keyframes shadowRolling {
+  0% {
+    box-shadow: 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+  12% {
+    box-shadow: 100px 0 white, 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+  25% {
+    box-shadow: 110px 0 white, 100px 0 white, 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0);
+  }
+  36% {
+    box-shadow: 120px 0 white, 110px 0 white, 100px 0 white, 0px 0 rgba(255, 255, 255, 0);
+  }
+  50% {
+    box-shadow: 130px 0 white, 120px 0 white, 110px 0 white, 100px 0 white;
+  }
+  62% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 130px 0 white, 120px 0 white, 110px 0 white;
+  }
+  75% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 white, 120px 0 white;
+  }
+  87% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 white;
+  }
+  100% {
+    box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0);
+  }
 }

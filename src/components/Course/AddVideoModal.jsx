@@ -102,7 +102,6 @@ const AddVideoModal = ({ addModalOpen, closeModal }) => {
       }
     }
   };
-  console.log("======test==>", course.sections, "====>", selectedSectionIndex)
   return (
     <Modal
       title="Add Lesson"

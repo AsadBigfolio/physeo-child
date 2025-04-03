@@ -29,7 +29,7 @@ const SectionSelector = ({
   const [isAdding, setIsAdding] = useState(false);
   const [newSectionTitle, setNewSectionTitle] = useState("");
   const [showTitleError, setShowTitleError] = useState("");
-  const [openAccordion, setOpenAccordion] = React.useState("item-1");
+  const [openAccordion, setOpenAccordion] = React.useState("item--1");
   const handleAddSection = () => {
     if (newSectionTitle) {
       setShowTitleError("");
@@ -72,15 +72,15 @@ const SectionSelector = ({
                 handleSectionSelect(i);
               },
               content: (
-                <div className="px-4">
-                  <Card>
+                <div className="py-8">
+                  <div className='px-5'>
                     <SectionVideos
                       addModalOpen={addModalOpen}
                       setAddModalOpen={setAddModalOpen}
                       setAddQuizModalOpen={setAddQuizModalOpen}
                       section={section}
                     />
-                  </Card>
+                  </div>
                 </div>
               ),
             }))}
@@ -94,7 +94,7 @@ const SectionSelector = ({
             <p className="text-gray-500 text-sm">No sections added yet</p>
             <Button
               size="sm"
-              variant="outline"
+              type="button"
               onClick={() => setIsAdding(true)}
             >
               Add Section

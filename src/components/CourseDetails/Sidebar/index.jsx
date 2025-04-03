@@ -10,6 +10,12 @@ import { cn } from "@/utils/classNames";
 import { FaRegNoteSticky } from "react-icons/fa6";
 import { handleShare } from '@/utils/share';
 import { usePathname } from 'next/navigation';
+import Link from 'next/link';
+import { FiBookOpen, FiChevronDown, FiPlay, FiShare2, FiClock } from 'react-icons/fi';
+import { FaStar, FaRegStar } from 'react-icons/fa';
+import { BsFileText, BsCheckCircle } from 'react-icons/bs';
+import { RiQuillPenLine } from 'react-icons/ri';
+
 
 const Sidebar = ({ setDisplaySidebar }) => {
   const params = useQueryParams();
@@ -49,6 +55,18 @@ const Sidebar = ({ setDisplaySidebar }) => {
         : [...prevActiveSections, sectionId]
     );
   };
+
+  useEffect(() => {
+    const videoId = params.get("video");
+    if (sections.length && videoId) {
+      for (const section of sections) {
+        if (section.videos.map(item => item._id).includes(videoId)) {
+          setActiveSections([...activeSections, section?._id]);
+          break;
+        }
+      }
+    }
+  }, [sections, params.get("video")]);
 
   useEffect(() => {
     if (watchLaterVideoData) {
@@ -114,100 +132,185 @@ const Sidebar = ({ setDisplaySidebar }) => {
     return `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
   };
   return (
-    <div className="bg-white md:border-l-[#DDDDDD] md:border-[1px] md:overflow-y-auto col-span-1 md:h-[calc(100vh-100px)]">
-      <div className="hidden md:block p-3 md:border-[1px] border-b-[#DDDDDD]">
-        <h2 className="font-bold text-base 2xl:text-title-lg">Course Details</h2>
+    <div className=" md:overflow-y-auto col-span-1 md:h-[calc(100vh-100px)] shadow-lg rounded-lg overflow-hidden">
+      {/* Header with subtle gradient */}
+      <div className="hidden md:block p-4 border-b border-gray-100 sticky top-0 bg-gradient-to-r from-indigo-50 to-white z-10">
+        <h2 className="font-bold text-lg 2xl:text-xl text-gray-800 flex items-center">
+          <RiQuillPenLine className="w-5 h-5 mr-2 text-black" />
+          <span>
+            Course Modules
+          </span>
+        </h2>
       </div>
+
+      {/* Sections with smooth accordion */}
+      <div className="divide-y divide-gray-100">
       {sections.map((section, i) => {
         const isActive = activeSections.includes(section._id);
         const isQuizActive = quizSlug === section?.quiz?._id;
+
         return (
           <div
             key={section.id}
-            className="border-b-[#DDDDDD] md:border-[1px] hover:cursor-pointer"
-            onClick={() => toggleSection(section._id)}
+            className="transition-all duration-300 hover:bg-gray-50/50"
           >
-            <div className={`p-5 font-poppins ${isActive && "bg-[#A197EC52]"}`}>
-              <div className="w-full flex justify-between items-center">
-                <h3 className="font-[600] text-base 2xl:text-title-lg">
-                  Section {i + 1}: {section.title}
-                </h3>
+            {/* Section Header with animated chevron */}
+            <div
+              className={`p-4 flex justify-between items-center cursor-pointer group ${isActive ? "bg-indigo-50/50" : ""}`}
+              onClick={() => toggleSection(section._id)}
+            >
+              <div className="flex items-center space-x-3">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isActive ? "bg-indigo-100 rotate-0" : "bg-gray-100 -rotate-90"} group-hover:bg-indigo-100`}>
+                  <FiChevronDown
+                    className={`w-4 h-4 transition-transform duration-300 ${isActive ? "text-indigo-600" : "text-gray-500"}`}
+                  />
+                </div>
+                <div>
+                  <h3 className="font-medium text-gray-900  group-hover:text-indigo-700 transition-colors">
+                    <span className="text-primary">Sub Module {i + 1}:</span> {section.title}
+                  </h3>
+                  <p className="text-sm text-gray-500 mt-1 flex items-center">
+                    <span className="inline-flex items-center mr-3">
+                      {/* <FiClock className="mr-1 w-3 h-3" />
+                      {calculateTotalDuration(section.videos)} */}
+                    </span>
+                    <span className="inline-flex items-center">
+                      <FiPlay className="mr-1 w-3 h-3" />
+                      {section?.videos?.length} lessons
+                    </span>
+                  </p>
+                </div>
               </div>
-              <h5 className="space-x-3 text-para-base 2xl:text-base">
-                <span>lessons: {section?.videos?.length}</span>
-              </h5>
+              {section?.quiz && (
+                <span className="bg-gradient-to-r from-purple-100 to-indigo-100 text-purple-800 text-xs px-2.5 py-1 rounded-full border border-purple-200 shadow-sm">
+                  <BsFileText className="inline mr-1" />
+                  Quiz
+                </span>
+              )}
             </div>
-            <div className={`section-content ${isActive ? "active" : ""}`}>
+
+            {/* Lessons with animated entrance */}
+            <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isActive ? "max-h-[2000px]" : "max-h-0"}`}>
               {section.videos.map((lesson, index) => {
                 const videoPlaying = lesson?._id === videoSlug;
+                const isWatchedLater = watchedLater.includes(lesson?._id);
+                const isCompleted = lesson.progress === 100;
+
                 return (
-                  <div
+                  <Link
                     className={cn(
-                      "p-3 2xl:p-5 font-poppins flex items-center space-x-4 hover:bg-[#cac5e952] border-y-[1px] relative"
+                      "block px-4 py-3 hover:bg-indigo-50/50 border-t border-gray-100 transition-all duration-200 relative group",
+                      videoPlaying && "bg-gradient-to-r from-indigo-50/80 to-white border-l-4 border-l-indigo-600",
+                      isCompleted && "hover:bg-green-50/50"
                     )}
                     key={index}
-                    onClick={(e) => handleVideoClick(e, lesson)}
+                    href={`/courses/${'ssdsdsdhv-sdsdsds'}?video=${lesson?._id}`}
                   >
-                    {videoPlaying &&
-                      <div
-                        className="absolute h-full w-[6px] left-0 top-0 bg-primary z-[3]"
-                        style={{
-                          clipPath: "polygon(0px 0px, calc(100% - 6px) 0px, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0px 100%)",
-                        }}
-                      />
+                    <div className="flex items-start space-x-3">
+                      {/* Thumbnail with multiple states */}
+                      <div className="relative flex-shrink-0 w-28 h-16 rounded-lg overflow-hidden shadow-sm border border-gray-200 group-hover:border-indigo-200 transition-all">
+                        <img
+                          src={lesson?.thumbnail?.src}
+                          alt={lesson.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                        {videoPlaying && (
+                          <div className="absolute inset-0 bg-indigo-600/30 flex items-center justify-center">
+                            <div className="w-7 h-7 bg-indigo-600 rounded-full flex items-center justify-center shadow-md animate-pulse">
+                              <FiPlay className="w-3 h-3 text-white" />
+                            </div>
+                          </div>
+                        )}
+                        {true && (
+                          <div className="absolute top-1 right-1 bg-green-500 rounded-full p-0.5 shadow-sm">
+                            <BsCheckCircle className="w-3 h-3 text-white" />
+                          </div>
+                        )}
+                      </div>
 
-                    }
-                    <div className="w-32 h-20 flex-shrink-0 !ml-0">
-                      <img
-                        src={lesson?.thumbnail?.src}
-                        alt={lesson.title}
-                        className="aspect-video object-cover rounded-lg"
-                      />
-                    </div>
-                    <div className="flex flex-col w-full">
-                      <div className="flex justify-between items-center mb-1 2xl:mb-3">
-                        <h3 className="text-base 2xl:text-title-lg">{lesson.title}</h3>
-                        <div className="flex items-center space-x-3 text-[18px] 2xl:text-[20px]">
-                          <span
-                            onClick={(e) => handleWatcherLaterClick(e, lesson, section)}
-                          >
-                            {watchedLater.includes(lesson?._id) ? (
-                              <GoStarFill className="text-primary" />
-                            ) : (
-                              <GoStar />
-                            )}
-                          </span>
-                          <button onClick={(e) => {
-                            const videoUrl = `/courses/${segments[2]}?video=${lesson?._id}`
-                            return handleShare(e, videoUrl)
-                          }}>
-                            <PiShareFatLight size={24} />
-                          </button>
+                      {/* Lesson Info */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex justify-between items-start">
+                          <h3 className={`text-sm font-medium ${videoPlaying ? "text-indigo-700" : "text-gray-900"} ${isCompleted ? "line-through decoration-green-500" : ""} truncate`}>
+                            {lesson.title}
+                          </h3>
+                          <div className="flex space-x-2 ml-2">
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleWatcherLaterClick(e, lesson, section);
+                              }}
+                              className="text-gray-400 hover:text-yellow-500 transition-colors transform hover:scale-110"
+                              aria-label={isWatchedLater ? "Remove from watch later" : "Add to watch later"}
+                            >
+                              {isWatchedLater ? (
+                                <FaStar className="w-4 h-4 fill-yellow-400 text-yellow-400 animate-bounce" />
+                              ) : (
+                                <FaRegStar className="w-4 h-4 group-hover:fill-yellow-500" />
+                              )}
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                handleShare(e, `/courses/${courseSlug}?video=${lesson?._id}`);
+                              }}
+                              className="text-gray-400 hover:text-indigo-600 transition-colors transform hover:scale-110"
+                              aria-label="Share lesson"
+                            >
+                              <FiShare2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center mt-1 text-xs text-gray-500 space-x-2">
+                          <FiClock className="w-3 h-3 flex-shrink-0" />
+                          <span>{generateExactTime(lesson.duration)}</span>
+                          {lesson.progress > 0 && (
+                            <>
+                              <span>•</span>
+                              <div className="w-full max-w-[80px] bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                                <div
+                                  className={`h-full rounded-full ${lesson.progress === 100 ? 'bg-green-500' : 'bg-indigo-600'}`}
+                                  style={{ width: `${lesson.progress}%` }}
+                                />
+                              </div>
+                              <span className="text-xs font-medium text-gray-400">
+                                {lesson.progress}%
+                              </span>
+                            </>
+                          )}
                         </div>
                       </div>
-                      <div className="flex items-center space-x-3">
-                        <PiVideo size={24} />
-                        <span>{generateExactTime(lesson.duration)}</span>
-                      </div>
                     </div>
-                  </div>
+                  </Link>
                 );
               })}
+
+              {/* Quiz with enhanced design */}
               {section?.quiz && (
                 <div
                   className={cn(
-                    "p-4 2xl:p-5 font-poppins hover:bg-[#cac5e952]",
-                    isQuizActive && "border-l-[6px] border-primary"
+                    "px-4 py-3 hover:bg-purple-50/50 cursor-pointer transition-all border-t border-gray-100 group",
+                    isQuizActive && "bg-gradient-to-r from-purple-50/80 to-white border-l-4 border-l-purple-600"
                   )}
                   onClick={(e) => handleQuizClick(e, section)}
                 >
-                  <div className="flex w-full justify-between items-center mb-1 2xl:mb-3">
-                    <h3 className="text-base 2xl:text-title-lg">
-                      Quiz: {section?.quiz?.title}
-                    </h3>
-                    <span>
-                      <FaRegNoteSticky size={20} />{" "}
-                    </span>
+                  <div className="flex items-center space-x-3">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gradient-to-br from-purple-100 to-indigo-100 flex items-center justify-center shadow-inner border border-purple-200">
+                      <BsFileText className="w-5 h-5 text-purple-600 group-hover:scale-110 transition-transform" />
+                    </div>
+                    <div>
+                      <h3 className={`text-sm font-medium ${isQuizActive ? "text-purple-700" : "text-gray-900"}`}>
+                        {section?.quiz?.title}
+                      </h3>
+                      <p className="text-xs text-gray-500 mt-1 flex items-center">
+                        <span className="bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded text-[0.7rem] mr-2">
+                          Knowledge Check
+                        </span>
+                        {section.quiz.questions?.length || 0} questions
+                      </p>
+                    </div>
                   </div>
                 </div>
               )}
@@ -215,6 +318,7 @@ const Sidebar = ({ setDisplaySidebar }) => {
           </div>
         );
       })}
+    </div>
     </div>
   );
 };

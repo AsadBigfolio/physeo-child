@@ -49,7 +49,7 @@ module.exports = {
         mainText: "#202020",
         purpleText: "#8350DF",
         secondaryWhite: "#f7f1ff",
-        authWhite: "#F6F0FF",
+        authWhite: "#eff4f8",
       },
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],

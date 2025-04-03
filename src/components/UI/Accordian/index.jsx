@@ -10,7 +10,7 @@ const Accordion = ({ items = [], onDelete, openValue, setOpenAccordion }) => {
   return (
     <AccordionPrimitive.Root type="single" collapsible value={openValue}>
       {items.map((item, index) => (
-        <AccordionItem value={`item-${index}`} key={index}>
+        <AccordionItem className="bg-[#f6f0ff] rounded-[25px] mb-3" value={`item-${index}`} key={index}>
           <AccordionTrigger
             onClick={() => {
               typeof item.onClick === "function" && item.onClick(item);
@@ -40,7 +40,7 @@ const AccordionTrigger = React.forwardRef(
       <AccordionPrimitive.Trigger
         ref={ref}
         className={cn(
-          "flex flex-1 items-center data-[state=open]:bg-primary-light data-[state=open]:text-black justify-between pb-4 p-3 border rounded-full mb-4 px-3 cursor-pointer text-mainText font-medium transition-all hover:bg-primary-light [&[data-state=open]>svg]:rotate-180",
+          "flex flex-1 items-center data-[state=open]:bg-primary-light data-[state=open]:text-black justify-between pb-4 p-3 border rounded-full px-3 cursor-pointer text-mainText font-medium transition-all hover:bg-primary-light [&[data-state=open]>svg]:rotate-180",
           className
         )}
         {...props}
@@ -50,7 +50,7 @@ const AccordionTrigger = React.forwardRef(
           <TrashIcon
             className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 hover:text-red-500 cursor-pointer"
             onClick={(e) => {
-              e.stopPropagation(); // Prevent triggering the accordion toggle
+              e.stopPropagation();
               onDelete();
             }}
           />

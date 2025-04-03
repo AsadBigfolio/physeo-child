@@ -1,31 +1,30 @@
 "use client";
 
 import { useContext, useState } from "react";
-import { signOut } from "next-auth/react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import UserContext from "@/context/user";
-import Link from "next/link.js";
-import Image from "next/image";
-import { FaArrowRight } from "react-icons/fa";
-import { FaAngleDown } from "react-icons/fa6";
+import { signOut } from "next-auth/react";
 import { IoIosMenu } from "react-icons/io";
-import MenuBar from "./MenuBar.jsx";
 import Drawer from "../Drawer/index.jsx";
-import RoundedButton from "../Home/RoundedButton/index.jsx";
+import CountdownBanner from '../Banner/index.jsx';
+import MenuBar from './MenuBar.jsx';
+import { FaAngleDown } from 'react-icons/fa';
+import PrimaryLink from '../PrimaryLink/index.jsx';
 
 const Header = () => {
   const pathName = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
   const { user } = useContext(UserContext);
   const headerItems = [
     { displayName: "Home", link: "/" },
     { displayName: "Courses", link: "/courses" },
-    { displayName: "Blogs", link: "/blog" },
-    { displayName: "Our Team", link: "/our-team" },
+    { displayName: "Dashboard", link: "/dashboard" },
+    { displayName: "Story", link: "/story" },
+    { displayName: "Contact", link: "/contact" },
   ];
-
   const mobileHeaderItems = [{ displayName: "Sign in", link: "/signin" }];
   const authenticated = !!user;
-
   const AuthenticatedProfileState = () => {
     const [isOpen, setIsOpen] = useState(false);
 
@@ -108,60 +107,82 @@ const Header = () => {
 
   return (
     <>
-      <header className="w-full flex space-x-2 items-center justify-between h-[50px] lg:h-[100px] max-w-[1320px] px-[20px] mx-auto">
-        {/* Show HamBurgerMenu on screens below 900px */}
-        <HamBurgerMenu />
+      <CountdownBanner />
+      <header className="w-full bg-white">
+        <div className="max-w-[1320px] mx-auto flex items-center justify-between h-[64px] px-6">
+          <button className="lg:hidden text-gray-700 text-2xl" onClick={() => setIsOpen(true)}>
+            <IoIosMenu />
+          </button>
 
-        <Link href="/">
-          <img
-            src={"/TSU_LogoOK2.png"}
-            className="filter invert w-[150px] lg:w-[225px] h-auto object-contain"
-            alt="Super U Logo"
-          />
-        </Link>
+          <Link href="/" className="flex items-center space-x-2">
+            <img src={"/new/Logo.jpg"} alt="Physeo Logo" className="w-[147px] h-[36px]" />
+          </Link>
 
-        <span className="lg:hidden text-para-base">
-          <Drawer />
-        </span>
+          <nav className="hidden lg:flex space-x-6 text-gray-700 text-sm font-medium ">
+            {headerItems.map((item, index) => (
+              <Link
+                key={index}
+                href={item.link}
+                className={`hover:text-blue-600 text-[16px] font-semibold transition leading-[20px] text-[#303030] ${pathName === item.link ? "!text-blue-600" : ""
+                  }`}
+              >
+                {item.displayName}
+              </Link>
+            ))}
+          </nav>
 
-        {/* Show the full menu on screens above 900px */}
-        <div className="hidden lg:flex w-[355px] lg:w-[423px] justify-between text-subtitle-md">
-          {headerItems.map((item, index) => (
-            <Link
-              href={item.link}
-              key={index}
-              className={`${pathName === item.link && "text-primary underline font-bold"
-                }`}
-            >
-              {item.displayName}
-            </Link>
-          ))}
+          <div className="flex items-center space-x-4">
+            {/* Search Button */}
+            <Drawer />
+
+            {/* Login & Sign-up Buttons */}
+            {!authenticated && <div className="hidden lg:flex space-x-3">
+              <Link
+                href="/signin"
+                className="px-5 py-2 border border-blue-600 text-blue-600 rounded-full text-sm font-medium"
+              >
+                Login
+              </Link>
+              <PrimaryLink
+                title="Join for Free"
+                href="/signup"
+              />
+            </div>}
+            {authenticated && <AuthenticatedProfileState />}
+
+            {/* Mobile Drawer Button */}
+            <span className="lg:hidden">
+              <Drawer />
+            </span>
+          </div>
         </div>
 
-        <div className="hidden lg:flex gap-5 items-center">
-          {authenticated ? (
-            <div className="flex items-center gap-1 lg:gap-3 2xl:gap-5">
-              <div className="flex gap-2 lg:gap-4 2xl:gap-6">
-                <span className="text-para-base lg:text-subtitle-md lg:2xl:text-[24px]">
-                  <Drawer />
-                </span>
-              </div>
-              <AuthenticatedProfileState />
-            </div>
-          ) : (
-              <div className="flex items-center justify-between gap-[20px]">
-                <div className="flex gap-[20px]">
-                  <span className="text-para-base lg:text-subtitle-md 2xl:text-[24px]">
-                    <Drawer />
-                  </span>
-                  <Link href="/signin" className="text-subtitle-md underline">
-                    Login
+        {/* Mobile Drawer Component */}
+        {isOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex">
+            <div className="bg-white w-64 p-6 shadow-lg">
+              <button className="text-gray-700 text-xl" onClick={() => setIsOpen(false)}>
+                ✕
+              </button>
+              <nav className="mt-6 space-y-4 text-gray-700 text-sm font-medium">
+                {headerItems.map((item, index) => (
+                  <Link key={index} href={item.link} className="block hover:text-blue-600">
+                    {item.displayName}
                   </Link>
-                </div>
-                <RoundedButton href="/signup" text="Join for Free" />
+                ))}
+              </nav>
+              <div className="mt-6 space-y-3">
+                <Link href="/login" className="block text-blue-600 font-medium">
+                  Login
+                </Link>
+                <Link href="/signup" className="block bg-blue-600 text-white text-center py-2 rounded">
+                  Join for Free
+                </Link>
               </div>
-          )}
-        </div>
+            </div>
+          </div>
+        )}
+
       </header>
     </>
   );

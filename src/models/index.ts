@@ -12,3 +12,4 @@ export { default as Quiz } from "./Quiz";
 export { default as OTP } from "./OTP";
 export { default as SubscribedPlan } from "./SubscribedPlan";
 export { default as Plan } from "./Plan";
+export { default as Category } from "./Category";

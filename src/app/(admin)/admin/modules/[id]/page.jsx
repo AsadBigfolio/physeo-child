@@ -1,10 +1,9 @@
 "use client";
 
-import { useContext, useMemo } from "react";
+import { useMemo } from "react";
 import CourseFormView from "@/components/Course/CourseFormView";
 import Page from "@/components/UI/Page";
 import { trpc } from "@/utils/trpcClient";
-import { safeJSONParse } from "@/utils/jsonParse";
 import { toast } from "sonner";
 import { useCourseStore } from "@/providers/CourseProvider";
 import { formatErrors } from "@/utils/formatTRPCErrors";
