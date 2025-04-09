@@ -77,7 +77,7 @@ const BooksSection = () => {
       <div className='max-w-[1320px] mx-auto flex flex-col gap-[36px]'>
         <div>
           <div className='flex justify-between items-center'>
-            <h1 className="text-center md:text-left text-[32px] font-semibold">
+            <h1 className="section-heading">
               Our Books
             </h1>
             <div className="z-[100] flex gap-7">
@@ -104,7 +104,7 @@ const BooksSection = () => {
               key={tab}
               className={`text-subtitle-md pb-4 relative transition-colors duration-300 ${activeTab === tab
                 ? "text-[#007DFC] font-semibold"
-                : "text-[#616161] font-semibold hover:text-[#007DFC]/80"
+                : "text-primary-muted font-semibold hover:text-[#007DFC]/80"
                 }`}
               onClick={() => setActiveTab(tab)}
             >

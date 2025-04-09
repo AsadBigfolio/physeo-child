@@ -31,7 +31,7 @@ export default async function RootLayout({ children }) {
   const session = await loadSession();
   const user = session?.user;
 
-  let userData;
+  let userData: any;
   if (user) {
     userData = await getUserProfileData(user);
     userData = userData ? JSON.parse(JSON.stringify(userData)) : {};

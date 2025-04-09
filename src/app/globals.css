@@ -258,3 +258,23 @@ html {
     box-shadow: 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0);
   }
 }
+
+.section-heading{
+  font-size: 32px;
+  font-weight: 600;
+  /* line-height: 100%; */
+  color: #1F272F;
+}
+.card-heading{
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+  color: #1F272F;
+}
+
+.muted-description{
+  font-size: 14px;
+  font-weight: 450;
+  line-height: 20px;
+  color: #616161;
+}

@@ -10,14 +10,14 @@ const features = [
 
 const FeatureCard = ({ title, description, icon, isActive, onClick }) => (
   <div
-    className={`flex gap-4 p-[20px] h-[112px] border rounded-lg shadow-sm cursor-pointer bg-gray-50 transition-all ${isActive ? "border-[#007DFC]" : "border-[#E3E3E3]"
+    className={`flex gap-4 p-[20px] items-center h-[112px] border rounded-lg shadow-sm cursor-pointer bg-gray-50 transition-all ${isActive ? "border-[#007DFC]" : "border-[#E3E3E3]"
       }`}
     onClick={onClick}
   >
     <div className="text-2xl">{icon}</div>
-    <div>
-      <h3 className="text-lg font-semibold">{title}</h3>
-      <p className="text-gray-500 text-sm">{description}</p>
+    <div className='flex flex-col gap-[8px]'>
+      <h3 className="card-heading">{title}</h3>
+      <p className="muted-description">{description}</p>
     </div>
   </div>
 );
@@ -30,7 +30,7 @@ export default function WhyChooseUsSection() {
       <div className="mx-auto flex justify-between">
         <div className='grid grid-cols-1 md:grid-cols-2 gap-8 items-end'>
           <div>
-            <h2 className="text-[32px] font-semibold mb-6">
+            <h2 className="section-heading mb-6 text-mainText">
               Why Do Thousands of Students Turn to Physeo?
             </h2>
             <div className="space-y-[20px]">

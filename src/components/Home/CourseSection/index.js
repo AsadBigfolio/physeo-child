@@ -7,7 +7,7 @@ import { useRef } from 'react';
 
 const InfoSection = ({ infoItems }) => {
   return (
-    <div className="flex items-center mt-[12px] gap-[8px] leading-[20px] font-[500] text-[#616161] text-[12px]">
+    <div className="flex items-center mt-[12px] gap-[8px] leading-[20px] font-[500] text-primary-muted text-[12px]">
       {infoItems.map((item, index) => (
         <div key={index} className="flex items-center bg-[#E7EEF3] rounded-[4px] h-[26px] px-[8px]">
           <Image height={15} width={15} src={item.icon} /> <span className="ml-[4px]">{item.text}</span>
@@ -32,16 +32,16 @@ function CourseCard() {
       />
       <div className="p-[16px]">
         <div className='flex flex-col gap-[8px]'>
-          <h3 className="text-title-lg text-[#1F272F]">
+          <h3 className="text-title-lg card-heading">
             This Figma course is all about designing websites for impact...
           </h3>
-          <p className="text-[15px] leading-[20px] font-[450] text-[#616161]">Rana Basit</p>
+          <p className="muted-description">Rana Basit</p>
           <div className="flex gap-x-[6px] items-center">
             <span className="text-[15px] leading-[20px] font-[600] text-[#966600]">5.0</span>
             <div className='flex gap-x-[1.34px]'>
               {[1, 1, 1, 1, 1].map((_, index) => (<img key={index} src="./new/courseRatingStar.svg" alt='rating-star' />))}
             </div>
-            <span className="text-[15px] leading-[20px] font-[450] text-[#616161]">(12)</span>
+            <span className="muted-description">(12)</span>
           </div>
         </div>
         <InfoSection infoItems={infoItems} />
@@ -60,7 +60,7 @@ const CourseSection = () => {
       <div className='max-w-[1320px] mx-auto flex flex-col gap-[36px]'>
         <div>
           <div className='flex justify-between items-center'>
-            <h1 className="text-center md:text-left text-[32px] font-semibold">
+            <h1 className="text-left section-heading">
               Courses
             </h1>
             <div className="z-[100] flex gap-7">

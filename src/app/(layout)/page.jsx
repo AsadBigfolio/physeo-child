@@ -1,14 +1,14 @@
-import dynamic from 'next/dynamic';
 import AOSInitializer from '@/components/AOSInitializer';
 
-const HeroSection = dynamic(() => import("@/components/Home/HeroSection"));
-const CourseSection = dynamic(() => import("@/components/Home/CourseSection"));
-const BooksSection = dynamic(() => import("@/components/Home/BooksSection"));
-const CurriculumSection = dynamic(() => import("@/components/Home/CurriculumSection"));
-const SubscriptionSection = dynamic(() => import("@/components/Home/SubscriptionSection"));
-const ReviewsSection = dynamic(() => import("@/components/Home/ReviewsSection"));
-const WhyChooseUsSection = dynamic(() => import("@/components/Home/WhyChooseUsSection"));
+import HeroSection from "@/components/Home/HeroSection";
+import CourseSection from "@/components/Home/CourseSection";
+import BooksSection from "@/components/Home/BooksSection";
+import CurriculumSection from "@/components/Home/CurriculumSection";
+import SubscriptionSection from "@/components/Home/SubscriptionSection";
+import ReviewsSection from "@/components/Home/ReviewsSection";
+import WhyChooseUsSection from "@/components/Home/WhyChooseUsSection";
 import loadSession from "@/utils/session";
+import PremiumSection from '@/components/Home/PremiumSection';
 
 export const metadata = {
   title: 'Home',
@@ -21,42 +21,45 @@ export default async function Home() {
   return (
     <>
       <AOSInitializer />
-      <div className='bg-gradient-to-b from-blue-50 to-blue-100'>
-        <div className='flex flex-col gap-5 md:gap-20 max-w-[1320px] px-[20px] mx-auto' data-aos="fade-up" data-aos-delay="100">
+      <div style={{ backgroundImage: 'url(/new/heroSectionBg.png)' }}>
+        <div className='flex flex-col max-w-[1320px] mx-auto' >
           <HeroSection />
         </div>
       </div>
-      <div className='mt-[10px] ' data-aos="fade-up" data-aos-delay="200">
+      <div className='mt-[10px]'>
         <CourseSection />
       </div>
-      <div style={{ backgroundImage: 'url(/new/circulumbg.png)', height: 776 }} data-aos="zoom-in" data-aos-delay="300">
-        <div className='flex flex-col gap-5 md:gap-20 max-w-[1320px] px-[20px] mx-auto'>
+      <div style={{ backgroundImage: 'url(/new/circulumbg.png)', height: 776 }} >
+        <div className='max-w-[1320px] mx-auto'>
           <CurriculumSection />
         </div>
       </div>
-      <div className='max-w-[1320px] px-[20px] mx-auto' data-aos="flip-up" data-aos-delay="400">
+      <div className='max-w-[1320px] mx-auto' >
         <WhyChooseUsSection />
       </div>
       <div className="overflow-hidden">
         <div
           style={{ backgroundImage: 'url(/new/background.png)', height: 861 }}
-          data-aos="fade-left"
-          data-aos-delay="500"
+          // data-aos="fade-left"
+          // data-aos-delay="500"
         >
-          <div className='flex flex-col gap-5 md:gap-20 max-w-[1320px] px-[20px] mx-auto'>
+          <div className='max-w-[1320px] px-[20px] mx-auto'>
             <SubscriptionSection session={session} />
           </div>
         </div>
       </div>
-      <div className='flex flex-col gap-5 md:gap-20 max-w-[1320px] px-[20px] mx-auto' data-aos="fade-right" data-aos-delay="600">
+      <div className='max-w-[1320px] mx-auto' >
         <ReviewsSection />
       </div>
       <div className="overflow-hidden">
-        <div style={{ backgroundImage: 'url(/new/booksbg.png)', height: 591 }} data-aos="fade-left" data-aos-delay="700">
-          <div className='flex flex-col gap-20 max-w-[1320px] px-[20px] mx-auto mb-[40px]'>
+        <div style={{ backgroundImage: 'url(/new/booksbg.png)', height: 588 }} >
+          <div className='flex flex-col gap-20 max-w-[1320px] mx-auto mb-[40px]'>
             <BooksSection />
           </div>
         </div>
+      </div>
+      <div className='max-w-[1320px] mx-auto py-[40px]' >
+        <PremiumSection />
       </div>
     </>
   );

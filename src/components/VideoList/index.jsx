@@ -4,7 +4,7 @@ import Link from 'next/link';
 import React, { useEffect } from 'react'
 import Skelton from './skelton';
 import { GoStar, GoStarFill } from "react-icons/go";
-import { PiShareFatLight, PiVideo } from "react-icons/pi";
+import { PiShareFatLight, PiVideo, } from "react-icons/pi";
 import { cn } from '@/utils/classNames';
 export default function VideoList({ searchTerm }) {
     const { data, error, isLoading, refetch } = trpc.video.getAll.useQuery({ searchQuery: searchTerm }, {
@@ -41,7 +41,7 @@ export default function VideoList({ searchTerm }) {
             {data?.map((item, index) => (
                 <Link href={`/courses/${item?.course?.slug}?video=${item?._id}`}
                     className={cn(
-                        "font-poppins flex items-center space-x-4 hover:bg-[#cac5e952] p-2 rounded-lg",
+                        "font-poppins flex items-center space-x-4 hover:bg-blue-50 p-2 rounded-lg",
                     )}
                     key={index}
                 >
@@ -60,14 +60,22 @@ export default function VideoList({ searchTerm }) {
                         <div className="flex justify-between items-center mb-1 2xl:mb-3">
                             <h3 className="text-base 2xl:text-title-lg line-clamp-1">{item?.title}</h3>
                             <div className="flex items-center space-x-3 text-[18px] 2xl:text-[20px]">
-                                <span >
+                                <button
+                                    className="p-1 hover:text-yellow-500 transition-colors"
+                                    aria-label="Add to favorites"
+                                >
                                     {false ? (
-                                        <GoStarFill className="text-primary" />
+                                        <GoStarFill className="text-yellow-400 text-xl" />
                                     ) : (
-                                        <GoStar />
+                                            <GoStar className="text-xl hover:text-yellow-400" />
                                     )}
-                                </span>
-                                <PiShareFatLight />
+                                </button>
+                                <button
+                                    className="p-1 hover:text-blue-600 transition-colors"
+                                    aria-label="Share this video"
+                                >
+                                    <PiShareFatLight className="text-xl" />
+                                </button>
                             </div>
                         </div>
                         <div className="flex items-center space-x-3">

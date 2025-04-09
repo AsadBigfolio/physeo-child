@@ -15,8 +15,7 @@ const BlogList = dynamic(() => import('../BlogList'), {
     ssr: false,
 });
 
-const Drawer = () => {
-    const [open, setOpen] = useState(false);
+const Drawer = ({ open, setOpen }) => {
     const [selectedTab, setSelectedTab] = useState('Videos');
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearchTerm] = useDebounce(searchTerm, 300);
@@ -41,11 +40,6 @@ const Drawer = () => {
 
     return (
         <>
-            <button onClick={() => setOpen(true)} className="hidden lg:flex items-center bg-gray-100 text-gray-500 px-4 py-2 rounded-full text-sm">
-                <FaSearch className="mr-2" />
-                Search
-            </button>
-
             <div
                 className={`fixed inset-0 z-[150] transition-all duration-300 ease-out ${open ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
             >

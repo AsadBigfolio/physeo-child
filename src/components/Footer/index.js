@@ -1,193 +1,168 @@
 "use client"
-import Link from "next/link";
-import SubscribeSection from "./SubscribeSection";
-import FacebookIcon from "@/svgs/FacebookIcon";
-import InstaIcon from "@/svgs/InstaIcon";
-import LinkedinIcon from "@/svgs/LinkedinIcon";
-import TiktokIcon from "@/svgs/TiktokIcon";
-import TwitterIcon from "@/svgs/TwitterIcon";
-import YoutubeIcon from "@/svgs/YoutubeIcon";
-import { usePathname } from "next/navigation";
+import React, { useState } from "react";
+import { PiInstagramLogoLight, PiYoutubeLogoLight, PiTwitterLogoLight } from "react-icons/pi";
+import { CiFacebook } from "react-icons/ci";
+import Link from 'next/link';
+import { trpc } from '@/utils/trpcClient';
+import { toast } from 'sonner';
+import Image from 'next/image';
 
-const aboutLinks = [
-  {
-    text: "Term of Service",
-    href: "/terms-of-service",
-  },
-  {
-    text: "Privacy Policy",
-    href: "/privacy-policy",
-  },
-  // {
-  //   text: "Refund Policy",
-  //   href: "/refund-policy",
-  // },
-  {
-    text: "FAQ",
-    href: "/faq",
-  },
-  {
-    text: "Contact Us",
-    href: "/contact-us",
-  },
-];
-const useFulLinks = [
-  {
-    text: "Certificates",
-    href: "/certificates",
-  },
-  {
-    text: "Titles",
-    href: "/",
-  },
-  {
-    text: "Merch",
-    href: "https://www.supernaturalcon.com/merch",
-    target: '_blank'
-  },
-  {
-    text: 'Become a Paranormal Investigator (coming soon)',
-    href: '#'
-  },
-  {
-    text: 'Share your Encounter',
-    href: '/contact-us'
-  }
-];
-
+const Spinner = ({ color = 'white' }) => {
+  return (
+    <svg
+      fill={color}
+      className="spinner"
+      width={20}
+      viewBox="0 0 44 44"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M15.542 1.487A21.507 21.507 0 00.5 22c0 11.874 9.626 21.5 21.5 21.5 9.847 0 18.364-6.675 20.809-16.072a1.5 1.5 0 00-2.904-.756C37.803 34.755 30.473 40.5 22 40.5 11.783 40.5 3.5 32.217 3.5 22c0-8.137 5.3-15.247 12.942-17.65a1.5 1.5 0 10-.9-2.863z"></path>
+    </svg>
+  );
+};
 const socialLinks = [
   {
-    icon: <InstaIcon />,
+    icon: "/social/insta.svg",
     href: "https://www.instagram.com/thesupernaturaluniversity",
   },
   {
-    icon: <FacebookIcon />,
+    icon: "/social/fb.svg",
     href: "https://www.facebook.com/thesupernaturaluniversity",
   },
   {
-    icon: <YoutubeIcon />,
+    icon: "/social/youtube.svg",
     href: "https://www.youtube.com/@thesupernaturaluniversity",
   },
   {
-    icon: <LinkedinIcon />,
+    icon: "/social/linkdin.svg",
     href: "https://www.linkedin.com/company/thesupernaturaluniversity",
   },
   {
-    icon: <TwitterIcon />,
+    icon: "/social/thread.svg",
     href: "/",
-  },
-  {
-    icon: <TiktokIcon />,
-    href: "/",
-  },
-];
-
-const Footer = () => {
-  const pathname = usePathname();
-  const shouldHideFooter = pathname.startsWith('/courses/');
-  if (shouldHideFooter) {
-    return
   }
+];
+const Footer = () => {
+  const [email, setEmail] = useState("");
+
+  const createEmailUserMutation = trpc.newsLetter.createEmailUser.useMutation({
+    onSuccess: (data) => {
+      toast.success(data?.message)
+    },
+    onError: (error) => {
+      toast.error(error?.message)
+    }
+  });
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    try {
+      await createEmailUserMutation.mutateAsync({ email });
+      setEmail("");
+    } catch (error) {
+      console.error("Subscription failed:", error);
+    }
+  };
   return (
-    <div className='bg-black footer-ele'>
-      <div className="max-w-[1320px] px-[20px] mx-auto">
-        <div className="hidden md:block pt-[80px]">
-          <SubscribeSection />
-        </div>
-        <div className="py-[24px] justify-between flex flex-col md:flex-row text-white md:pb-[20px] md:border-b-[1px] md:border-[#313131]">
-          <div className="w-full md:w-[24%] 2xl:w-[30%] mb-[25px] md:mb-0-">
-            <div className='flex justify-center md:justify-start'>
-              <img
-                src={"/TSU_LogoOK2.png"}
-                alt="Super U Logo"
-                className="w-[175px] h-[47px] md:h-[70px] md:w-[330px] ml-[-10px] md:ml-[-17px]"
-            />
+    <footer className="bg-[#EFF4F8] text-mainText pt-[40px] pb-[32px]">
+      <div className='max-w-[1320px] mx-auto'>
+        <div className="grid md:grid-cols-4 gap-10">
+          {/* Logo and Description */}
+          <div>
+            <div className="flex items-center space-x-2">
+              <Link href="/" className="flex items-center space-x-2">
+                <img src={"/new/logo.jpg"} alt="Physeo Logo" className="w-[147px] h-[36px]" />
+              </Link>
             </div>
-            <p className="text-subtitle-md mt-[5px] block md:hidden">
-              THE SUPERNATURAL UNIVERSITY IS NOT ACCREDITED BY AN ACCREDITING ORGANIZATION RECOGNIZED BY THE UNITED STATES SECRETARY OF EDUCATION
-            </p>
-            <div className="w-full flex justify-center md:justify-start md:flex-col md:w-[285px] mt-10">
-              <h2 className="hidden md:block mb-4 text-title-lg ">Social Links</h2>
-              <div className="flex justify-between md:justify-start gap-[30px] md:gap-5 2xl:gap-8 flex-wrap">
-                {socialLinks.map((socialHandle, index) => (
-                  <Link href={socialHandle.href} target='_blank' key={index}>
-                    {socialHandle.icon}
-                  </Link>
-                ))}
+            <div className='flex gap-[8px] items-center mt-[24px]'>
+              <div className='rounded-full bg-[#E3ECF6] size-[36px] flex justify-center items-center'>
+                <Image src={"/social/sms.svg"} alt="Physeo Logo" height={20} width={20} />
               </div>
+              <p className='text-[15px] leading-[20px] font-medium text-mainText'>examplemail@gmail.com</p>
             </div>
-          </div>
-          <div className="w-full md:w-[15%] 2xl:w-[14%] text-para-lg flex flex-col 2xl:px-6 mb-[45px] md:mb-0">
-            <h2 className="mb-2 text-title-lg">Useful Links</h2>
-            <div className='flex flex-col gap-y-[10px]'>
-              {useFulLinks.map((link, index) => {
-                return (
-                  <Link
-                    href={link.href}
-                    key={index}
-                    className="underline text-subtitle-md opacity-70 "
-                    target={link.target ?? ''}
-                  >
-                    {link.text}
-                  </Link>
-                );
-              })}
+            <div className='flex gap-[8px] items-center mt-[16px]'>
+              <div className='rounded-full bg-[#E3ECF6] size-[36px] flex justify-center items-center'>
+                <Image src={"/social/call.svg"} alt="Physeo Logo" height={20} width={20} />
+              </div>
+              <p className='text-[15px] leading-[20px] font-medium text-mainText'>(438) 347 667 665</p>
             </div>
-          </div>
-          <div className="w-full md:w-[15%] 2xl:w-[14%] text-para-lg flex flex-col 2xl:px-6 mb-[45px] md:mb-0">
-            <h2 className="mb-2 text-title-lg">About</h2>
-            <div className='flex flex-col gap-y-[10px]'>
-              {aboutLinks.map((link, index) => {
-                return (
-                  <Link
-                    href={link.href}
-                    key={index}
-                    className="underline text-subtitle-md opacity-70"
-                  >
-                    {link.text}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-          <div className="w-full md:w-[20%] 2xl:w-[28%] 2xl:px-11 mb-[45px] md:mb-0">
-            <h2 className="mb-4 text-title-lg">Disclaimer</h2>
-            <p className="text-subtitle-md opacity-70">
-              This University is not designed to qualify you for jobs. If it does
-              assist you in getting employment then please let us know at {' '}
-              <span style={{ wordWrap: 'break-word' }} className="font-poppinsBold font-bold underline cursor-pointer">
-                <Link href="mailto:Dean@TheSupernaturalUniversity.com">
-                  Dean@TheSupernaturalUniversity.com
-                </Link>
-              </span>{" "}
-              because that would be incredible.
-            </p>
-          </div>
-          <div className="block md:hidden md:px-[20px]">
-            <SubscribeSection />
           </div>
 
-        </div>
-        <div className="w-full flex justify-center md:pt-[50px] pb-[50px]">
-          <div className="text-center text-subtitle-md text-white">
-            <p className="mb-[30px] text-center text-subtitle-md hidden md:block">
-              THE SUPERNATURAL UNIVERSITY IS NOT ACCREDITED BY AN ACCREDITING ORGANIZATION RECOGNIZED BY THE UNITED STATES SECRETARY OF EDUCATION
-            </p>
-            <div className='w-full flex justify-center'>
-              <p className="mb-[30px] leading-6">
-                Note: In the United States, many licensing authorities require
-                accredited degrees as the basis for eligibility for licensing. In
-                some cases, accredited colleges may not accept for transfer courses
-                and degrees completed at unaccredited colleges, and some employers
-                may require an accredited degree as a basis for eligibility for
-                employment.
-              </p>
-            </div>
-            <p>The Supernatural University © 2019 - 2025 All Rights Reserved. Developed by <span className='text-primary font-bold cursor-pointer hover:underline'>Bigfolio</span></p>
+          {/* Quick Links */}
+          <div className='flex flex-col gap-[20px]'>
+            <h3 className="font-semibold text-[16px] leading-[24px]">Quick Links</h3>
+            <ul className="space-y-[16px] font-[450] text-[16px] leading-[20px]">
+              <li>Home</li>
+              <li>Courses</li>
+              <li>Dashboard</li>
+              <li>Story</li>
+              <li>Contact</li>
+            </ul>
           </div>
+
+          {/* Courses */}
+          <div className='flex flex-col gap-[20px]'>
+            <h3 className="font-semibold text-[16px] leading-[24px]">Courses</h3>
+            <ul className="space-y-[16px] font-[450] text-[16px] leading-[20px]">
+              <li>USMLE - Preclinical</li>
+              <li>USMLE - Clinical</li>
+              <li>Physician Assistant</li>
+              <li >Doctor of Dental Surgery</li>
+            </ul>
+          </div>
+
+          {/* Newsletter */}
+          <div className='flex flex-col gap-[12px]'>
+            <div>
+              <h3 className="font-semibold text-[16px] leading-[24px]">Stay in the Loop</h3>
+              <p className='muted-description'>We won't spam you, we promise!</p>
+            </div>
+            <form className='flex gap-[8px] justify-between' onSubmit={handleSubscribe}>
+              <div className="flex items-center bg-white !w-full rounded-full overflow-hidden shadow-sm">
+                <input
+                  type="email"
+                  value={email}
+                  placeholder="Enter your email"
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="flex-grow px-4 h-[36px] text-sm focus:outline-none"
+                />
+                <button className='p-1' type='submit'>
+                  <div className="size-[36px] rounded-full flex items-center justify-center text-white font-bold">
+                    {createEmailUserMutation.isPending ? <div className='mx-3'><Spinner color='#007DFC' /></div> : <img src="/new/arrowButton.svg" alt='arrowButton' />}
+                  </div>
+                </button>
+              </div>
+            </form>
+            <div className="flex gap-[12px] ">
+              {socialLinks.map((link, index) => (
+                <Link href={link.href} target='_blank' key={index} className='rounded-full bg-[#E3ECF6] size-[36px] flex justify-center items-center'>
+                  <Image src={link.icon} alt="Physeo Logo" height={20} width={20} />
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <hr className="mb-[16px] mt-[84px] border-[#BABABA]" />
+
+        {/* Bottom bar */}
+        <div className="flex flex-col md:flex-row items-center justify-between leading-[20px] font-[450] text-[15px] text-primary-muted">
+          <p>
+            © 2025 Physeo. All right reserved
+          </p>
+
+          <div className="flex space-x-4">
+            <a href="#">Terms of Service</a>
+            <a href="#">Privacy Policy</a>
+          </div>
+        </div>
+        <div className='bg-[#E1E9F0] flex flex-col gap-[4px] text-center mt-[24px] text-primary-muted text-[12px] py-[14px] leading-[20px]'>
+          <p>PHYSEO IS NOT ACCREDITED BY AN ACCREDITING ORGANIZATION RECOGNIZED BY THE UNITED STATES SECRETARY OF EDUCATION</p>
+          <p>Note: In the United States, many licensing authorities require accredited degrees as the basis for eligibility for licensing. In some cases, accredited colleges may not accept for transfer <br /> courses and degrees completed at unaccredited colleges, and some employers may require an accredited degree as a basis for eligibility for employment.</p>
         </div>
       </div>
-    </div>
+
+    </footer>
   );
 };
 

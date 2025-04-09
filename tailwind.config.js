@@ -33,6 +33,7 @@ module.exports = {
           DEFAULT: "var(--primary)",
           foreground: "var(--primary-foreground)",
           light: "var(--background-light)",
+          muted: "#616161"
         },
         secondary: {
           DEFAULT: "var(--secondary)",
@@ -46,7 +47,7 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        mainText: "#202020",
+        mainText: "#1F272F",
         purpleText: "#8350DF",
         secondaryWhite: "#f7f1ff",
         authWhite: "#eff4f8",

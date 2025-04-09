@@ -50,11 +50,12 @@ const subjectsData = {
 
 
 const CurriculumCard = ({ title, description, icon }) => (
-  <div className="bg-white shadow-md rounded-lg p-[12px] flex flex-col gap-[20px] items-start">
+  <div className="bg-white rounded-[12px] p-[20px] border-[#E3E3E3] border-[1px] flex flex-col gap-[12px] items-start">
     <div className="text-blue-500 size-[28px] rounded-[8px] bg-[#007DFC1A] p-[8px] ">{""}</div>
     <div className='flex flex-col gap-[6px]'>
-      <h3 className="text-title-lg">{title}</h3>
-      <p className="text-[#616161] text-[14px] leading-[20px]">{description}</p>
+      <h3 className="card-heading">{title}</h3>
+      <p className="muted-description truncate w-full max-w-[208px]">{description}</p>
+
     </div>
   </div>
 );
@@ -65,14 +66,14 @@ export default function CurriculumSection() {
   return (
     <div className="py-10">
       <div className="mx-auto">
-        <h2 className="text-[32px] font-semibold mb-[20px]">Curriculum</h2>
+        <h2 className="section-heading mb-[20px]">Curriculum</h2>
         <div className="flex gap-6 border-b relative">
           {tabs.map((tab) => (
             <button
               key={tab}
               className={`text-subtitle-md pb-4 relative transition-colors duration-300 ${activeTab === tab
                 ? "text-[#007DFC] font-semibold"
-                : "text-[#616161] font-semibold hover:text-[#007DFC]/80"
+                : "text-primary-muted font-semibold hover:text-[#007DFC]/80"
                 }`}
               onClick={() => setActiveTab(tab)}
             >

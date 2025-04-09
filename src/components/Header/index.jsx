@@ -1,21 +1,109 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { Suspense, useContext, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import UserContext from "@/context/user";
 import { signOut } from "next-auth/react";
 import { IoIosMenu } from "react-icons/io";
-import Drawer from "../Drawer/index.jsx";
 import CountdownBanner from '../Banner/index.jsx';
-import MenuBar from './MenuBar.jsx';
-import { FaAngleDown } from 'react-icons/fa';
 import PrimaryLink from '../PrimaryLink/index.jsx';
+import Image from 'next/image.js';
+import { FiUser, FiLogOut } from "react-icons/fi";
+import dynamic from 'next/dynamic.js';
+import { FaSearch } from 'react-icons/fa';
 
+const Drawer = dynamic(() => import("../Drawer/index.jsx"), {
+  ssr: false
+});
+
+const AuthenticatedProfileState = ({ user }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  const handleLogout = () => {
+    signOut();
+    setIsOpen(false);
+  };
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        className="flex items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+        onClick={toggleDropdown}
+        aria-label="Profile menu"
+        aria-expanded={isOpen}
+        aria-haspopup="true"
+      >
+        <Image
+          src={user?.image ?? "/DummyProfilePic.jpg"}
+          alt="User profile"
+          width={40}
+          height={40}
+          className="rounded-full object-contain h-[40px] border-2 border-gray-200 transition-colors duration-200"
+          priority
+        />
+      </button>
+
+      <div
+        className={`absolute right-0 mt-2 w-48 bg-white rounded-[12px] shadow-lg z-[999] transition-all duration-200 ease-out ${isOpen
+          ? "opacity-100 scale-100 translate-y-0"
+          : "opacity-0 scale-95 -translate-y-1 pointer-events-none"
+          }`}
+        role="menu"
+      >
+        <div className="py-2 px-2">
+          <Link
+            href="/profile"
+            className="flex items-center gap-2 px-4 py-2 text-sm rounded-md text-mainText hover:bg-blue-100 hover:text-primary transition-colors duration-200 ease-in-out"
+            role="menuitem"
+            onClick={() => setIsOpen(false)}
+          >
+            <FiUser className="text-lg" />
+            <span>Profile</span>
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm rounded-md text-mainText hover:bg-blue-100 hover:text-primary transition-colors duration-200 ease-in-out"
+            role="menuitem"
+          >
+            <FiLogOut className="text-lg" />
+            <span>Sign out</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 const Header = () => {
   const pathName = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useContext(UserContext);
+  const [loadDrawer, setLoadDrawer] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const handleOpenDrawer = () => {
+    setLoadDrawer(true);
+    setOpen(true);
+  };
+
   const headerItems = [
     { displayName: "Home", link: "/" },
     { displayName: "Courses", link: "/courses" },
@@ -23,87 +111,7 @@ const Header = () => {
     { displayName: "Story", link: "/story" },
     { displayName: "Contact", link: "/contact" },
   ];
-  const mobileHeaderItems = [{ displayName: "Sign in", link: "/signin" }];
   const authenticated = !!user;
-  const AuthenticatedProfileState = () => {
-    const [isOpen, setIsOpen] = useState(false);
-
-    const handleLogout = () => {
-      signOut();
-    };
-
-    const toggleDropdown = () => {
-      setIsOpen(!isOpen);
-    };
-
-    return (
-      <div className="relative h-auto">
-        <div
-          className="flex items-center gap-1 lg:gap-4 bg-primary rounded-full p-2 cursor-pointer"
-          onClick={toggleDropdown}
-        >
-          <img
-            src={user?.image || "/DummyProfilePic.jpg"}
-            alt="Profile"
-            className="h-10 w-10 rounded-full"
-          />
-          <div className="flex items-center px-3 gap-2">
-            <p className="text-white text-para-lg">Profile</p>
-            <span className="text-white text-para-lg">
-              <FaAngleDown />
-            </span>
-          </div>
-        </div>
-
-        <div
-          className={`absolute right-0 mt-2 w-full bg-white rounded-lg shadow-lg z-[150] overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "max-h-96 opacity-100 scale-100" : "max-h-0 opacity-0 scale-95"
-            }`}
-          style={{ transformOrigin: "top" }}
-        >
-          <Link
-            href="/profile"
-            className="block w-full px-4 py-2 transition-all text-black hover:bg-primary-light"
-          >
-            Profile
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="block w-full px-4 py-2 text-left transition-all text-black hover:bg-primary-light"
-          >
-            Sign out
-          </button>
-        </div>
-      </div>
-    );
-  };
-
-  const HamBurgerMenu = () => {
-    const [isOpen, setIsOpen] = useState(false);
-
-    const handleLogout = () => {
-      signOut();
-    };
-
-    const toggleDropdown = () => {
-      setIsOpen(!isOpen);
-    };
-
-    return (
-      <div className="lg:hidden min-w-max">
-        <span className="text-para-base" onClick={toggleDropdown}>
-          <IoIosMenu size={32} />
-        </span>
-        <MenuBar
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          authenticated={authenticated}
-          headerItems={headerItems}
-          mobileHeaderItems={mobileHeaderItems}
-          handleLogout={handleLogout}
-        />
-      </div>
-    );
-  };
 
   return (
     <>
@@ -132,10 +140,12 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center space-x-4">
-            {/* Search Button */}
-            <Drawer />
+            <button onClick={handleOpenDrawer} className="hidden lg:flex items-center bg-[#EFF4F8] font-[450] hover:shadow-md text-primary-muted px-4 py-2 rounded-full text-[14px]">
+              <FaSearch className="mr-2" />
+              Search here
+            </button>
 
-            {/* Login & Sign-up Buttons */}
+
             {!authenticated && <div className="hidden lg:flex space-x-3">
               <Link
                 href="/signin"
@@ -148,14 +158,23 @@ const Header = () => {
                 href="/signup"
               />
             </div>}
-            {authenticated && <AuthenticatedProfileState />}
+            {authenticated && <AuthenticatedProfileState user={user} />}
 
-            {/* Mobile Drawer Button */}
             <span className="lg:hidden">
-              <Drawer />
+              <button onClick={handleOpenDrawer} className="hidden lg:flex items-center bg-[#EFF4F8] font-[450] hover:shadow-md text-primary-muted px-4 py-2 rounded-full text-[14px]">
+                <FaSearch className="mr-2" />
+                Search here
+              </button>
+
             </span>
           </div>
         </div>
+        {loadDrawer && (
+          <Suspense fallback={<div className="w-8 h-8" />}>
+            <Drawer open={open} setOpen={setOpen} />
+          </Suspense>
+        )}
+
 
         {/* Mobile Drawer Component */}
         {isOpen && (

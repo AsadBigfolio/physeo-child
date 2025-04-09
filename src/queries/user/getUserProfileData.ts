@@ -8,7 +8,7 @@ export const getUserProfileData = async (user) => {
   try {
     const user = await User.findOne({ email })
       .select(
-        "-password -history -deletedAt -createdAt -updatedAt -provider"
+        "-password -history -deletedAt -updatedAt -provider"
       )
       .populate({
         path: "badges.badge",
