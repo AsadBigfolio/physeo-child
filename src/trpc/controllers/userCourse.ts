@@ -1,12 +1,20 @@
-import { Badge, Course, Quiz, Section, User, Video, WatchLater } from "@/models";
+import { watchLaterQueue } from '@/lib/queues/watchLater.queue';
+import { Badge, Quiz, Section, User, Video, WatchLater } from "@/models";
 import { WatchHistory } from "@/models";
 import { Types } from "mongoose";
 
 export const createWatchLater = async (input) => {
   try {
-    const watchLater = await WatchLater.create(input);
+    await watchLaterQueue.add("watchLater", input, {
+      attempts: 3,
+      removeOnComplete: true,
+      backoff: {
+        type: "exponential",
+        delay: 2000,
+      },
+    });
 
-    return watchLater;
+    return {};
   } catch (error) {
     console.error("Error creating WatchLater document:", error.message);
   }
@@ -72,7 +80,6 @@ export const createOrUpdateWatchHistory = async (input) => {
 
     if (allVideosWatched.every(Boolean)) {
       const badge = await Badge.findOne({ section: dbVideo?.section?._id }).populate({ path: 'image', select: 'src' });
-      console.log('Assign badge ===========>')
       const isBadgeAwarded = userDetail?.badges.some(
         (b) => b.badge?.toString() === badge?._id.toString()
       );

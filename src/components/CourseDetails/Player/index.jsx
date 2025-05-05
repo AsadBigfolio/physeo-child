@@ -5,15 +5,12 @@ import ReactPlayer from "react-player";
 import UserContext from "@/context/user";
 import useQueryParams from "@/hooks/useQueryParams";
 import { trpc } from "@/utils/trpcClient";
-import { FaPlay } from "react-icons/fa";
 
-const Player = ({ handleVideoClick, handleSectionBaseModal }) => {
+const Player = ({ handleVideoClick, handleSectionBaseModal, currentVideoData }) => {
   const params = useQueryParams();
-  const { currentVideoData, courseData } = useContext(UserCourseContext);
+  const { courseData } = useContext(UserCourseContext);
   const { user } = useContext(UserContext);
   const progress = params.get("progress");
-  const [thumbnailImage, setThumbnailImage] = useState("");
-  const [showPlayer, setShowPlayer] = useState(false);
 
   const { mutate: addWatchHistory } = trpc.userCourse.createOrUpdateWatchHistory.useMutation({
     onSuccess: (data) => {
@@ -64,16 +61,8 @@ const Player = ({ handleVideoClick, handleSectionBaseModal }) => {
     }
   };
 
-  useEffect(() => {
-    const thumbnailUrl = currentVideoData?.thumbnail?.src;
-    if (thumbnailUrl) {
-      setThumbnailImage(encodeURI(thumbnailUrl));
-    }
-  }, [currentVideoData]);
-
   return (
-    <div className="video-wrapper w-full h-0 relative pt-[56%]">
-      {true ? (
+    <div className="video-wrapper w-[910px]  h-[514px] relative pt-[56%]">
         <ReactPlayer
           width="100%"
           height="100%"
@@ -89,7 +78,7 @@ const Player = ({ handleVideoClick, handleSectionBaseModal }) => {
             top: "0px",
             left: "0px",
           }}
-          light={thumbnailImage}
+        light={currentVideoData?.thumbnail?.src}
           progressInterval={10000}
           onProgress={(progress) => {
             if (!videoEnded) {
@@ -103,23 +92,7 @@ const Player = ({ handleVideoClick, handleSectionBaseModal }) => {
           onDuration={(duration) => {
             durationRef.current = duration;
           }}
-        />
-      ) : (
-          <div
-            onClick={() => setShowPlayer(true)}
-            className='size-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 overflow-hidden'
-          >
-            <img
-              src={thumbnailImage}
-              alt="Video Thumbnail"
-              className="size-full cursor-pointer object-cover"
-              style={{ width: '100%', height: '100%' }}
-            />
-            <button className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[1]'>
-              <FaPlay className='text-white text-2xl' />
-            </button>
-          </div>
-      )}
+      />
     </div>
   );
 };

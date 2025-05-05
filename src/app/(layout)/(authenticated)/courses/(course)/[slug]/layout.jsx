@@ -42,13 +42,13 @@ const layout = async ({ children, params }) => {
   const courseDetails = JSON.parse(serializedCourseData);
   return (
     <UserCourseProvider defaultCourse={courseDetails}>
-      <div className="flex flex-col md:flex-row items-start justify-center bg-white">
+      <div className="bg-[#EFF4F8]">
         <MobileSidebar />
-        <div className="grid grid-cols-3 items-start w-full max-h-[calc(100vh-100px)] max-w-screen overflow-hidden">
-          <div className="w-full h-fit md:overflow-y-auto md:max-h-[calc(100vh-100px)] max-h-screen col-span-3 md:col-span-2 items-start flex-col">
+        <div className="flex flex-col md:flex-row max-w-[1320px] gap-[24px] mx-auto pt-[40px]">
+          <div className="w-[910px]">
             {children}
           </div>
-          <div className="hidden md:block">
+          <div className="hidden md:block w-full">
             <Sidebar sections={courseDetails.sections} />
           </div>
         </div>

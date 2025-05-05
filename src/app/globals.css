@@ -278,3 +278,9 @@ html {
   line-height: 20px;
   color: #616161;
 }
+.react-player__shadow{
+  background: #00000057 !important;
+}
+.react-player__preview{
+  border-radius: 8px !important;
+}

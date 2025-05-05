@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { FaTimes } from 'react-icons/fa';
 
 const CountdownBanner = () => {
-    const discountTime = "2025-04-09T00:00:00Z"
+    const discountTime = "2025-05-01T00:00:00Z"
     const [timeLeft, setTimeLeft] = useState(null);
     const [showBanner, setShowBanner] = useState(true);
 

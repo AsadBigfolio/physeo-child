@@ -37,7 +37,6 @@ const AddCourse = () => {
     () => formatErrors(validationErrors),
     [validationErrors]
   );
-
   return (
     <Page
       header={{

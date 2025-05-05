@@ -19,6 +19,10 @@ const CourseFormView = ({ formattedErrors, formattedValidationErrors }) => {
     setAddModalOpen(false);
     setSelectedVideoIndex(undefined);
   };
+  const closeQuizModal = () => {
+    setAddQuizModalOpen(false);
+    setSelectedVideoIndex(undefined);
+  };
 
   return (
     <div>
@@ -120,7 +124,7 @@ const CourseFormView = ({ formattedErrors, formattedValidationErrors }) => {
       <AddQuizModal
         addQuizModalOpen={addQuizModalOpen}
         setAddQuizModalOpen={setAddQuizModalOpen}
-        closeModal={() => setAddQuizModalOpen(false)}
+        closeModal={closeQuizModal}
       />
     </div>
   );

@@ -1,80 +1,79 @@
 "use client"
-
+import React, { useState } from 'react';
+import { FaHeadphones, FaQuestionCircle, FaBook, FaShare, FaBookmark } from 'react-icons/fa';
 import { useContext } from "react";
-import UserCourseContext from "@/context/userCourse";
+import { handleShare } from '@/utils/share';
+import { trpc } from '@/utils/trpcClient';
+import UserContext from '@/context/user';
+import { toast } from 'sonner';
 
-const OverViewTab = () => {
-  const { currentVideoData } = useContext(UserCourseContext)
 
-  const rating = 4.7;
-  const flooredRating = Math.floor(rating);
-  const totalStars = 5;
-
-  const learningPoints = [
-    "Lorem ipsum dolor sit amet, consecture wlit elit.",
-    "Lorem ipsum dolor sit amet, consecture wlit elit.",
-    "Lorem ipsum dolor sit amet, consecture wlit elit.",
-    "Lorem ipsum dolor sit amet, consecture wlit elit.",
-    "Lorem ipsum dolor sit amet, consecture wlit elit.",
-    "Lorem ipsum dolor sit amet, consecture wlit elit.",
-    "Lorem ipsum dolor sit amet, consecture wlit elit miamet, consecture wlit elit.",
+const OverViewTab = ({ currentVideoData }) => {
+  const { user } = useContext(UserContext)
+  const { topics, title, description, isWatchLater } = currentVideoData || {};
+  const [isWatchLaterState, setIsWatchLaterState] = useState(isWatchLater)
+  const { mutate: createWatchLaterMutation } = trpc.userCourse.createWatchLater.useMutation({
+    onSuccess: () => {
+      toast.success('Added to watch letter.')
+      setIsWatchLaterState(true)
+    }
+  });
+  const addWatchLater = () => {
+    createWatchLaterMutation({
+      user: user?._id,
+      course: currentVideoData?.course?._id,
+      video: currentVideoData?._id,
+      section: currentVideoData?.section
+    })
+  }
+  const buttons = [
+    { icon: <FaHeadphones />, text: 'Listen' },
+    { icon: <FaQuestionCircle />, text: 'Quiz' },
+    { icon: <FaBook />, text: 'Textbook' },
+    { icon: <FaShare />, text: 'Share', onClick: (e) => handleShare(e, currentVideoData?.videoUrl) },
+    { icon: <FaBookmark />, text: 'Save', onClick: addWatchLater, className: isWatchLaterState ? 'cursor-not-allowed opacity-50 pointer-events-none' : '' }
   ];
 
+
   return (
-    <div className="p-5 2xl:pt-[30px] 2xl:px-[50px] text-mainText flex flex-col pb-5">
-      <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-2 sm:mb-4 md:mb-6 lg:mb-8 xl:mb-10 2xl:mb-12">
-        {currentVideoData?.title}
-      </h1>
-      {currentVideoData?.description && <>
-        <h2 className="text-title-lg mb-[10px] 2xl:mb-[30px]">Description</h2>
-        <p className="text-subtitle-md w-[90%] mb-[30px] line-clamp-3">
-          {currentVideoData?.description}
-        </p></>}
-      {/* <p className="text-para-lg font-poppins w-[90%] mb-[80px]">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-        occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-        mollit anim id est laborum.
-      </p> */}
-      {/* <div className="flex w-full h-[80px] mb-[80px]">
-        <div className="pr-[50px] border-r-black border-r-[1px]">
-          <p className="font-poppins font-bold text-[24px] mb-1">200+</p>
-          <p className="font-syne text-para-lg">Students</p>
-        </div>
-        <div className="pl-[50px]">
-          <div className="flex items-center space-x-[10px]">
-            <p className="font-poppins font-bold text-[24px] mb-1">{rating}</p>
-            <div className="flex">
-              {Array.from({ length: totalStars }, (_, index) =>
-                index < flooredRating ? (
-                  <GoStarFill key={index} size={23} fill="#F6AE23" />
-                ) : (
-                  <GoStar key={index} size={23} />
-                )
-              )}
-            </div>
-          </div>
-          <p className="font-syne text-para-lg">Reviews</p>
-        </div>
-      </div>
-      <div className="mb-[60px] p-[30px] border-[1px] border-[#DDDDDD] rounded-2xl">
-        <h2 className="text-[26px] font-syne text-mainText font-bold mb-[46px]">
-          {"What you'll Learn"}
-        </h2>
-        <div className="grid grid-cols-2 gap-y-[30px]">
-          {learningPoints.map((point, index) => (
-            <div className="flex items-center space-x-[15px]" key={index}>
-              <FiCheckCircle size={28} />
-              <p className="font-poppins text-subtitle-md ">
-                Lorem ipsum dolor sit amet, consecture wlit elit.{" "}
-              </p>
-            </div>
+    <div>
+      <div className='flex flex-col gap-[12px] mt-[20px]'>
+        <h1 className="text-3xl font-[600] text-mainText">
+          {title}
+        </h1>
+
+        <div className="flex flex-wrap gap-2">
+          {buttons.map((button, index) => (
+            <button
+              key={index}
+              className={`flex gap-[9px] items-center bg-white rounded-full border font-[600] text-[14px] px-[16px] py-[10px] border-[#E3E3E3] text-mainText ${button.className ?? ""}`}
+              onClick={button?.onClick && button.onClick}
+            >
+              <span>{button.icon}</span>
+              {button.text}
+            </button>
           ))}
         </div>
-      </div> */}
+
+        <p className="muted-description">
+          {description}
+        </p>
+      </div>
+
+      <div className="rounded-lg p-[20px] flex flex-col gap-[20px] mt-[32px] bg-white">
+        <h2 className="text-[24px] font-bold">Topics</h2>
+
+        <div className="flex flex-wrap gap-x-[10px] gap-y-[16px]">
+          {topics?.map((topic, index) => (
+            <span
+              key={index}
+              className="px-[12px] py-[6px] text-[14px] font-[450] bg-[#E7EEF3] rounded-[8px] text-mainText"
+            >
+              {topic}
+            </span>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

@@ -67,7 +67,7 @@ export default function CurriculumSection() {
     <div className="py-10">
       <div className="mx-auto">
         <h2 className="section-heading mb-[20px]">Curriculum</h2>
-        <div className="flex gap-6 border-b relative">
+        <div className="flex gap-6 border-b relative ">
           {tabs.map((tab) => (
             <button
               key={tab}

@@ -13,3 +13,5 @@ export { default as OTP } from "./OTP";
 export { default as SubscribedPlan } from "./SubscribedPlan";
 export { default as Plan } from "./Plan";
 export { default as Category } from "./Category";
+import "../lib/workers/watchLater.worker";
+

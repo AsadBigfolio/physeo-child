@@ -10,7 +10,7 @@ const InfoSection = ({ infoItems }) => {
     <div className="flex items-center mt-[12px] gap-[8px] leading-[20px] font-[500] text-primary-muted text-[12px]">
       {infoItems.map((item, index) => (
         <div key={index} className="flex items-center bg-[#E7EEF3] rounded-[4px] h-[26px] px-[8px]">
-          <Image height={15} width={15} src={item.icon} /> <span className="ml-[4px]">{item.text}</span>
+          <Image height={15} width={15} alt={item.text} src={item.icon} /> <span className="ml-[4px]">{item.text}</span>
         </div>
       ))}
     </div>
@@ -56,7 +56,7 @@ const CourseSection = () => {
   const handlePrev = () => swiperRef.current?.slidePrev();
   const handleNext = () => swiperRef.current?.slideNext();
   return (
-    <div className="py-5 md:py-[24px] px-[23px] md:px-0 ">
+    <div className="py-5 md:py-[24px] ">
       <div className='max-w-[1320px] mx-auto flex flex-col gap-[36px]'>
         <div>
           <div className='flex justify-between items-center'>

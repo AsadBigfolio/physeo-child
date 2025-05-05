@@ -4,25 +4,19 @@ import Player from "@/components/CourseDetails/Player";
 import OverViewTab from "@/components/CourseDetails/VideoTabs/OverViewTab";
 import UserCourseContext from "@/context/userCourse";
 import useQueryParams from "@/hooks/useQueryParams";
-import Quiz from "@/components/CourseDetails/Quiz";
 import UserContext from "@/context/user";
 import { trpc } from "@/utils/trpcClient";
-import Modal from "@/components/UI/Modal";
-import Link from "next/link";
-import Confetti from 'react-confetti'
 import VideoCardSkeleton from '@/components/Profile/VideoCardSkeleton';
+import { UnPaidContent } from '../UnPaidContent';
 
-
-const PlayerSetup = () => {
-    const { courseData, setActiveSections, setCurrentVideoData, setQuizSection } =
-        useContext(UserCourseContext);
-    const { user, updateUser } = useContext(UserContext);
+const PlayerSetup = ({ currentVideoData }) => {
+    const { courseData, setActiveSections, setCurrentVideoData, setQuizSection } = useContext(UserCourseContext);
+    const { user } = useContext(UserContext);
     const [hasAccess, setHasAccess] = useState(false);
-    const [isShowBadgeModal, setBadgeModal] = useState(false);
-    const [awardedBadge, setAwardedBadge] = useState(null);
     const params = useQueryParams();
     const videoSlug = params.get("video");
     const quizSlug = params.get("q");
+    const { isTrial } = currentVideoData || {};
 
     const getVideoAndSection = (videoSlug, courseData) => {
         if (videoSlug) {
@@ -141,80 +135,24 @@ const PlayerSetup = () => {
             setActiveSections((prev) => [...prev, videoSectionId]);
         }
     }, [quiz, video, quizSectionId, videoSectionId]);
-
-
-    const isFreeTrialVideo = useMemo(() => {
-        for (const section of courseData?.sections) {
-            const video = section.videos.find((video) => video._id === videoSlug);
-            if (video) {
-                return video?.isTrial;
-            }
-        }
-        return false;
-    }, [courseData, videoSlug]);
-
+    console.log({ currentVideoData })
     return (
         <>
-            {(isShowBadgeModal) &&
-                <Confetti
-                    style={{ zIndex: 1000 }}
-                    width={window.outerWidth - 20}
-                />
-            }
             {isLoading ? (
                 <VideoCardSkeleton />
-            ) : isFreeTrialVideo || hasAccess ? (
-                quizSlug ? (
-                    <Quiz />
-                ) : (
+            ) :
+                isTrial ? (
                     <>
-                        <Player handleVideoClick={handleNextStep} />
-                        <OverViewTab />
+                        <Player handleVideoClick={handleNextStep} currentVideoData={currentVideoData} />
+                        <OverViewTab currentVideoData={currentVideoData} />
                     </>
-                )
-            ) : (
-                <div className="flex flex-col justify-center items-center h-[80vh] text-center space-y-6">
-                    <h1 className="text-3xl font-bold text-gray-800">
-                        You don&apos;t have access to this course
-                    </h1>
-                    <p className="text-gray-600">
-                        Purchase this course to unlock all the content and start learning
-                        today.
-                    </p>
-                    <Link
-                        href={"/#plan"}
-                        scroll={true}
-                        className="px-6 py-3 bg-[#491a8b] text-white rounded-xl hover:bg-purple-700 transition-all duration-300"
-                    >
-                        Buy Now
-                    </Link>
-                </div>
-            )}
-            <Modal open={isShowBadgeModal} title={`🎉 Congratulations! 🎉 you won ${awardedBadge?.title} badge.`} onClose={() => setBadgeModal(false)}>
-                <div className="flex flex-col items-center justify-center p-6 space-y-4 bg-gradient-to-b from-purple-600 to-indigo-800 rounded-lg shadow-lg text-white">
-                    <h2 className="text-2xl font-semibold text-center">{awardedBadge?.title}</h2>
-                    <div className="relative">
-                        <div className="absolute -inset-2 bg-purple-400 rounded-full blur-lg opacity-50 animate-pulse"></div>
-                        <img
-                            src={awardedBadge?.image?.src}
-                            alt={`${awardedBadge?.title} badge`}
-                            className="h-[120px] w-[120px] rounded-full shadow-lg border-4 border-white"
-                        />
-                    </div>
-                    <p className="text-center text-lg px-4">
-                        {awardedBadge?.description}
-                    </p>
-                    <button
-                        onClick={() => setBadgeModal(false)}
-                        className="px-6 py-2 mt-4 font-medium text-purple-700 bg-white rounded-full shadow-md hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-300 transition-all"
-                    >
-                        Close
-                    </button>
-                </div>
-            </Modal>
+                ) : (
+                    <UnPaidContent />
+                )}
 
         </>
     );
 };
+
 
 export default PlayerSetup;

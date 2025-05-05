@@ -64,7 +64,7 @@ const Footer = () => {
     }
   };
   return (
-    <footer className="bg-[#EFF4F8] text-mainText pt-[40px] pb-[32px]">
+    <footer className="bg-[#EFF4F8] text-mainText pt-[40px] pb-[32px] px-[25px] md:px-0">
       <div className='max-w-[1320px] mx-auto'>
         <div className="grid md:grid-cols-4 gap-10">
           {/* Logo and Description */}

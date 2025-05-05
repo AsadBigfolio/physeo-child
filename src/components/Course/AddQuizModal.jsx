@@ -87,7 +87,7 @@ const AddQuizModal = ({ addQuizModalOpen, closeModal }) => {
 
     const updatedSections = [...course.sections]
     updatedSections[selectedSectionIndex].videos[selectedVideoIndex].quiz = quizData
-    updateCourse({ sections: updatedSections });
+    updateCourse({ sections: updatedSections, selectedVideoIndex: undefined });
 
     closeModal();
   };

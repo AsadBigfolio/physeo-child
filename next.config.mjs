@@ -7,6 +7,11 @@ const nextConfig = {
         hostname: "superu.s3.us-east-2.amazonaws.com",
         pathname: "/files/**",
       },
+      {
+        protocol: "https",
+        hostname: "picsum.photos",
+        pathname: "/**",
+      },
     ],
   },
   experimental: {

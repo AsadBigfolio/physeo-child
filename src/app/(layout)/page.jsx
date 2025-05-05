@@ -26,29 +26,30 @@ export default async function Home() {
           <HeroSection />
         </div>
       </div>
-      <div className='mt-[10px]'>
+      <div className='mt-[10px] px-[25px] md:px-0 '>
         <CourseSection />
       </div>
-      <div style={{ backgroundImage: 'url(/new/circulumbg.png)', height: 776 }} >
-        <div className='max-w-[1320px] mx-auto'>
+      <div style={{ backgroundImage: 'url(/new/circulumbg.png)', }} className='md:h-[776px]' >
+        <div className='max-w-[1320px] mx-auto px-[25px] md:px-[0px]'>
           <CurriculumSection />
         </div>
       </div>
-      <div className='max-w-[1320px] mx-auto' >
+      <div className='max-w-[1320px] mx-auto px-[25px] md:px-0' >
         <WhyChooseUsSection />
       </div>
       <div className="overflow-hidden">
         <div
-          style={{ backgroundImage: 'url(/new/background.png)', height: 861 }}
+          style={{ backgroundImage: 'url(/new/background.png)', }}
           // data-aos="fade-left"
           // data-aos-delay="500"
+          className='md:h-[861px]'
         >
-          <div className='max-w-[1320px] px-[20px] mx-auto'>
+          <div className='max-w-[1320px] px-[25px] md:px-0 mx-auto'>
             <SubscriptionSection session={session} />
           </div>
         </div>
       </div>
-      <div className='max-w-[1320px] mx-auto' >
+      <div className='max-w-[1320px] mx-auto px-[25px] md:px-0' >
         <ReviewsSection />
       </div>
       <div className="overflow-hidden">
@@ -58,7 +59,7 @@ export default async function Home() {
           </div>
         </div>
       </div>
-      <div className='max-w-[1320px] mx-auto py-[40px]' >
+      <div className='max-w-[1320px] mx-auto py-[40px] px-[25px] md:px-0' >
         <PremiumSection />
       </div>
     </>
